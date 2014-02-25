@@ -1,8 +1,8 @@
 # Secure Browsing
 
-##### William Wu
-##### Kevin Huynh
-##### Shiv Sundram
+William Wu  
+Kevin Huynh  
+Shiv Sundram  
 
 
 
