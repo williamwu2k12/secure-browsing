@@ -1,13 +1,12 @@
-<!-- Secure Browsing -->
+# Secure Browsing
 
-William Wu
-Kevin Huynh
-Shiv Sundram
+##### William Wu
+##### Kevin Huynh
+##### Shiv Sundram
 
 
 
-<!-- Security -->
-
+## Security
 - multiple layers of security and different encryptions for databases
 - password protection with different commands for each key
     - delete all caches, browsing history, bookmarks, favorites
@@ -16,9 +15,7 @@ Shiv Sundram
 - pregenerated key file required with the actual password
 
 
-
-<!-- Browsing -->
-
+## Browsing
 - general browsing
     - saved tabsets as major points on a timeline, since most successful searches end with a close
     - link filters, blacklists and whitelists, to avoid seeing previously viewed links
