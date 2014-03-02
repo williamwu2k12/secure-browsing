@@ -1,6 +1,10 @@
+// var setting for api accessing and substitution cipher
 var StorageArea = chrome.storage.local;
 var cipher = setupCipher();
 
+
+
+// store and get functions
 function store(key, value)
 {
     var object = {};
@@ -8,57 +12,46 @@ function store(key, value)
     object[key] = locked;
     StorageArea.set(object);
 }
-
 function get(key)
 {
     StorageArea.get(key, function(object)
     {
-        console.log(object[key]);
+        console.log(decrypt(object[key]));
     });
 }
 
+
+
+// encrypt and decrypt functions
 function encrypt(value)
 {
     var secret = "";
-    for (var letter = 0; letter < value.length; letter++);
+    for (var letter = 0; letter < value.length; letter++)
     {
-        secret.concat(cipher[value.charAt(letter)]);
+        secret += cipher[value.charAt(letter)];
     }
-    console.log(value);
-    console.log(secret);
     return secret;
 }
-
 function decrypt(value)
 {
-    return value;
+    var unsecret = "";
+    for (var letter = 0; letter < value.length; letter++)
+    {
+        unsecret += cipher.getKeyByValue(value.charAt(letter));
+    }
+    return unsecret;
 }
+
+
+
+// Debugging
 StorageArea.clear(function(){});
-store("one", "please save this, thank you");
-get("one");
+store("item", "this line will eventually be encrypted");
+get("item");
 
 
 
-
-
-
-
-
-
-
-
-// chrome.tabs.onCreated.addListener(function(tab)
-// {
-//     background.console.log("tab created");
-// })
-
-// chrome.tabs.onUpdated.addListener(function(id, info, tab)
-// {
-//     background.console.log(info.url);
-// })
-
-
-
+// helper functions
 function setupCipher()
 {
     var cipher = {};
@@ -72,9 +65,10 @@ function setupCipher()
         codes.push(letter);
         i++;
     }
+    codes.push(" ");
 
     var valx, valy, x, y;
-    while (codes.length > 1)
+    while (codes.length > 2)
     {
         x = Math.floor(Math.random() * (codes.length - 1) + 1);
         y = Math.floor(Math.random() * (codes.length - 1) + 1);
@@ -96,11 +90,26 @@ function setupCipher()
             codes.splice(y - 1, 1);
         }
     }
-    cipher[codes[0]] = codes[0];
-
+    cipher[codes[0]] = codes[1];
+    cipher[codes[1]] = codes[0];
+    
     // Debugging
     // console.log(cipher);
     // console.log(codes.length);
     // console.log(Object.keys(cipher).length);
     return cipher;
+}
+
+Object.prototype.getKeyByValue = function(value)
+{
+    for (var key in this)
+    {
+        if (this.hasOwnProperty(key))
+        {
+            if (this[key] === value)
+            {
+                return key;
+            }
+        }
+    }
 }

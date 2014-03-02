@@ -15,6 +15,7 @@
   [
     "history",
     "tabs",
-    "storage"
+    "storage",
+    "unlimitedStorage"
   ]
 }
