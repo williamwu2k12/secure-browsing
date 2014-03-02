@@ -13,5 +13,13 @@
     <body>
         <script src="fetch.js"></script>
         <script src="storage.js"></script>
+        <script src="view.js"></script>
+        <script>
+        function createTab() {
+            var linkTo = {url: "http://www.stackoverflow.com"};
+            chrome.tabs.create(linkTo);
+        }
+        </script>
+        <button type="button" onclick="createTab();"> History</button> 
     </body>
 </html>
