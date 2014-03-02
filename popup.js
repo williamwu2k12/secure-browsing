@@ -1,4 +1,4 @@
-console.log("figure out how to get links saved while in incognito (chrome.tabs.incognito)");
+console.log("figure out how to get links saved while in incognito (chrome.tabs.incognito). also, remember to turn left");
 // StorageArea.set({"one": "please save this, thank you"}, function(){console.log});
 // result = StorageArea.get("one");
 // console.log(result);
@@ -17,6 +17,7 @@ function get(key)
 store("one", "please save this, thank you");
 console.log(get("one"));
 
+
 // chrome.tabs.onCreated.addListener(function(tab)
 // {
 //     background.console.log("tab created");
@@ -26,3 +27,4 @@ console.log(get("one"));
 // {
 //     background.console.log(info.url);
 // })
+
