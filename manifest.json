@@ -11,10 +11,16 @@
     "default_popup": "popup.html"
   },
 
+  "background":
+  {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+
   "content_scripts":
   [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
       "js": ["listen.js"]
     }
   ],
@@ -26,6 +32,7 @@
     "storage",
     "unlimitedStorage",
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "<all_urls>"
   ]
 }
