@@ -10,3 +10,24 @@ var script = document.createElement('script');
 script.textContent = code;
 (document.head||document.documentElement).appendChild(script);
 script.parentNode.removeChild(script);
+
+chrome.runtime.onMessage.addListener(function(request, sender)
+{
+    console.log("content script receives message from background");
+})
+
+function sendMessage(msg)
+{
+    chrome.extension.sendMessage({message: msg});
+}
+
+if (window == top)
+{
+    window.addEventListener("keyup", function(event)
+    {
+        if (event.keyCode == 90)
+        {
+            sendMessage("testing message sending");
+        }
+    }, false);
+}

@@ -1,23 +1,24 @@
-chrome.extension.onRequest.addListener(function(request, sender)
+chrome.extension.onMessage.addListener(function(request, sender)
 {
     console.log("background receives message from content script");
     var message = processMessage(request.message);
     returnMessage(message);
 })
 
-function processMessage(message)
+function processMessage(msg)
 {
     if (true)
     {
         console.log("background processes message");
     }
-    return message;
+    return msg;
 }
 
-function returnMessage(message)
+function returnMessage(msg)
 {
     chrome.tabs.getSelected(null, function(tab)
     {
-        chrome.tabs.sendMessage(tab.id);
+        console.log("background sends message to content script");
+        chrome.tabs.sendMessage(tab.id, {message: msg});
     })
 }

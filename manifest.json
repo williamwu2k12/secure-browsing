@@ -25,6 +25,8 @@
     }
   ],
 
+  "incognito": "split",
+
   "permissions":
   [
     "history",
