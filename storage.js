@@ -8,16 +8,32 @@ var cipher = setupCipher();
 function store(key, value)
 {
     var object = {};
-    var locked = encrypt(value);
-    object[key] = locked;
+    value.url = encrypt(value.url);
+    object[key] = value;
+    console.log(value.url);
     StorageArea.set(object);
 }
 function get(key)
 {
     StorageArea.get(key, function(object)
     {
-        console.log(decrypt(object[key]));
+        console.log(decrypt(object[key].url));
     });
+}
+
+
+
+
+document.addEventListener("DOMContentLoaded", function(){alert("working");});
+
+
+function link(address)
+{
+    this.accesses = {}; // array with the times accessed
+    this.url = address;
+    this.bookmarks = {};
+    this.tags = {};
+    this.session = {};
 }
 
 
@@ -44,10 +60,19 @@ function decrypt(value)
 
 
 
-// Debugging
-StorageArea.clear(function(){});
-store("item", "this line will eventually be encrypted");
-get("item");
+// debugging
+// StorageArea.clear(function(){});
+store("1", new link("http://www.google.com/"));
+store("2", new link("http://www.facebook.com/"));
+store("3", new link("http://www.imgur.com/"));
+store("4", new link("http://www.reddit.com/"));
+store("5", new link("http://www.cs.berkeley.edu/"));
+store("6", new link("http://www.stackoverflow.com/"));
+store("7", new link("http://www.ycombinator.com/"));
+store("8", new link("http://www.piazza.com/"));
+store("9", new link("http://bearfacts.berkeley.edu/"));
+store("10", new link("http://calbears.imtrackonline.com/"));
+get("1");
 
 
 

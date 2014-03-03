@@ -11,11 +11,21 @@
     "default_popup": "popup.html"
   },
 
+  "content_scripts":
+  [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["listen.js"]
+    }
+  ],
+
   "permissions":
   [
     "history",
     "tabs",
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "http://*/*",
+    "https://*/*"
   ]
 }
