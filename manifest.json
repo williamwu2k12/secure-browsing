@@ -21,9 +21,11 @@
   [
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
-      "js": ["listen.js"]
+      "js": ["fetch.js", "storage.js", "content.js"]
     }
   ],
+
+  "web_accessible_resources": ["fetch.js", "storage.js"],
 
   "incognito": "split",
 

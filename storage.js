@@ -1,18 +1,17 @@
-// var setting for api accessing and substitution cipher
-var StorageArea = chrome.storage.local;
-var cipher = setupCipher();
+////////////////////////////////
+// Store and Get JSON Objects //
+////////////////////////////////
 
-
-
-// store and get functions
 function store(key, value)
 {
     var object = {};
     value.url = encrypt(value.url);
+    // console.log(value.url);
+    // console.log(decrypt(value.url));
     object[key] = value;
-    console.log(value.url);
     StorageArea.set(object);
 }
+
 function get(key)
 {
     StorageArea.get(key, function(object)
@@ -21,24 +20,32 @@ function get(key)
     });
 }
 
-
-
-
-document.addEventListener("DOMContentLoaded", function(){alert("working");});
-
-
 function link(address)
 {
-    this.accesses = {}; // array with the times accessed
+    this.accesses = [];
     this.url = address;
-    this.bookmarks = {};
-    this.tags = {};
-    this.session = {};
+    this.bookmarks = [];
+    this.tags = [];
+    this.session = [];
+}
+
+function storeTab()
+{
+    var address = location.href;
+    var hyperlink = new link(address);
+    var today = new Date();
+    var date = {year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), millseconds: today.getMilliseconds()};
+    hyperlink.accesses.push(date);
+    store(address, hyperlink);
+    console.log("storing " + address + " succeeded");
 }
 
 
 
-// encrypt and decrypt functions
+///////////////////////////////////
+// Encrypt and Decrypt Link Data //
+///////////////////////////////////
+
 function encrypt(value)
 {
     var secret = "";
@@ -48,6 +55,7 @@ function encrypt(value)
     }
     return secret;
 }
+
 function decrypt(value)
 {
     var unsecret = "";
@@ -58,40 +66,10 @@ function decrypt(value)
     return unsecret;
 }
 
-
-
-// debugging
-// StorageArea.clear(function(){});
-store("1", new link("http://www.google.com/"));
-store("2", new link("http://www.facebook.com/"));
-store("3", new link("http://www.imgur.com/"));
-store("4", new link("http://www.reddit.com/"));
-store("5", new link("http://www.cs.berkeley.edu/"));
-store("6", new link("http://www.stackoverflow.com/"));
-store("7", new link("http://www.ycombinator.com/"));
-store("8", new link("http://www.piazza.com/"));
-store("9", new link("http://bearfacts.berkeley.edu/"));
-store("10", new link("http://calbears.imtrackonline.com/"));
-get("1");
-
-
-
-// helper functions
 function setupCipher()
 {
     var cipher = {};
-    var codes = new Array();
-
-    var i = 33;
-    var letter;
-    while (i < 128)
-    {
-        letter = String.fromCharCode(i);
-        codes.push(letter);
-        i++;
-    }
-    codes.push(" ");
-
+    var codes = setupChars();
     var valx, valy, x, y;
     while (codes.length > 2)
     {
@@ -117,13 +95,33 @@ function setupCipher()
     }
     cipher[codes[0]] = codes[1];
     cipher[codes[1]] = codes[0];
-    
     // Debugging
     // console.log(cipher);
     // console.log(codes.length);
     // console.log(Object.keys(cipher).length);
     return cipher;
 }
+
+function setupChars()
+{
+    var codes = new Array();
+    var i = 33;
+    var letter;
+    while (i < 128)
+    {
+        letter = String.fromCharCode(i);
+        codes.push(letter);
+        i++;
+    }
+    codes.push(" ");
+    return codes;
+}
+
+
+
+///////////////////////////
+// Miscellaneous Helpers //
+///////////////////////////
 
 Object.prototype.getKeyByValue = function(value)
 {
