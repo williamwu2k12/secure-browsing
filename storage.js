@@ -5,10 +5,8 @@
 function store(key, value)
 {
     var object = {};
-    value.url = encrypt(value.url);
-    // console.log(value.url);
-    // console.log(decrypt(value.url));
-    object[key] = value;
+    data = encrypt(JSON.stringify(value));
+    object[key] = data;
     StorageArea.set(object);
 }
 
@@ -16,17 +14,19 @@ function get(key)
 {
     StorageArea.get(key, function(object)
     {
-        console.log(decrypt(object[key].url));
+        console.log(decrypt(object[key]));
+        // console.log(decrypt(object[key].url));
     });
 }
 
 function link(address)
 {
-    this.accesses = [];
     this.url = address;
-    this.bookmarks = [];
-    this.tags = [];
-    this.session = [];
+    this.accesses = [];
+    // this.bookmarks = [];
+    // this.tags = [];
+    // this.session = [];
+    // this.searches = [];
 }
 
 function storeTab()
@@ -114,6 +114,10 @@ function setupChars()
         i++;
     }
     codes.push(" ");
+    codes.splice(1, 1);
+    codes.splice(5, 1);
+    codes.splice(57, 1);
+    codes.splice(91, 1);
     return codes;
 }
 

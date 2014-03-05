@@ -20,14 +20,10 @@
   "content_scripts":
   [
     {
-      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "matches": ["<all_urls>"],
       "js": ["fetch.js", "storage.js", "content.js"]
     }
   ],
-
-  "web_accessible_resources": ["fetch.js", "storage.js"],
-
-  "incognito": "split",
 
   "permissions":
   [
@@ -35,8 +31,9 @@
     "tabs",
     "storage",
     "unlimitedStorage",
-    "http://*/*",
-    "https://*/*",
     "<all_urls>"
-  ]
+  ],
+
+  "web_accessible_resources": ["fetch.js", "storage.js"],
+  "incognito": "split"
 }
