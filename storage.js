@@ -1,25 +1,39 @@
-////////////////////////////////
-// Store and Get JSON Objects //
-////////////////////////////////
+/**************************
+**  Storing and Getting  **
+**************************/
 
+/**
+* function store(key, value)
+* @purpose: stores the string value of JSON object in local storage
+* @param: key: string, either date of access, index, or url
+* @param: value: JSON dictionary, of type link
+**/
 function store(key, value)
 {
     var object = {};
-    var accessor = encrypt(key);
-    var data = encrypt(JSON.stringify(value));
-    object[accessor] = data;
+    object[encrypt(key)] = encrypt(JSON.stringify(value));
     StorageArea.set(object);
 }
 
+/**
+* function get(key)
+* @purpose: retrieves the object, decrypts, reconverts to JSON, logs to console
+* @param: key: string, either date of access, index, or url
+**/
 function get(key)
 {
     StorageArea.get(key, function(object)
     {
         console.log(decrypt(object[decrypt(key)]));
-        // console.log(decrypt(object[key].url));
     });
 }
 
+/**
+* function link(address)
+* @purpose: constructor creating the main history object
+* @param: address: the url accessed
+* @note: needs to be updated with more fields later, structure possibly changed
+**/
 function link(address)
 {
     this.url = address;
@@ -30,23 +44,38 @@ function link(address)
     // this.searches = [];
 }
 
-function storeTab()
+/**
+* function storeUrl(url)
+* @purpose: stores the url, access data, and other information of the visit
+* @param: url: the url to be stored
+* @note: url should be interchangeable with location.href
+* @note: checks to make sure that the url is not empty
+**/
+function storeUrl(url)
 {
-    var address = location.href;
-    var hyperlink = new link(address);
-    var today = new Date();
-    var date = {year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()};
-    hyperlink.accesses.push(date);
-    store(address, hyperlink);
-    console.log("storing " + address + " succeeded");
+    StorageArea.get(encrypt(url), function(object)
+    {
+        var hyperlink = object[encrypt(url)];
+        var today = new Date();
+        if (hyperlink == undefined)
+        {
+            hyperlink = new link(url);
+        }
+        else
+        {
+            hyperlink = JSON.parse(decrypt(hyperlink));
+        }
+        hyperlink.accesses.push({year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()});
+        store(url, hyperlink);
+        console.log("Storing " + JSON.stringify(hyperlink) + " succeeded.");
+    })
 }
 
-
-
-///////////////////////////////////
-// Encrypt and Decrypt Link Data //
-///////////////////////////////////
-
+/**
+* function encrypt(value)
+* @purpose: encrypts the JSON string so that people with access to file can't use it
+* @param: value: string to be encrypted
+**/
 function encrypt(value)
 {
     var secret = "";
@@ -57,6 +86,11 @@ function encrypt(value)
     return secret;
 }
 
+/**
+* function decrypt(value)
+* @purpose: decrypts a JSON string so that the right users can access it
+* @param: value: string to be decrypted
+**/
 function decrypt(value)
 {
     var unsecret = "";
@@ -67,63 +101,15 @@ function decrypt(value)
     return unsecret;
 }
 
-function setupCipher()
-{
-    var cipher = {};
-    var codes = setupChars();
-    var valx, valy, x, y;
-    while (codes.length > 2)
-    {
-        x = Math.floor(Math.random() * (codes.length - 1) + 1);
-        y = Math.floor(Math.random() * (codes.length - 1) + 1);
-        if (x == y)
-        {
-            continue;
-        }
-        valx = codes[x];
-        valy = codes[y];
-        cipher[valx] = valy;
-        cipher[valy] = valx;
-        codes.splice(x, 1);
-        if (x > y)
-        {
-            codes.splice(y, 1);
-        }
-        else
-        {
-            codes.splice(y - 1, 1);
-        }
-    }
-    cipher[codes[0]] = codes[1];
-    cipher[codes[1]] = codes[0];
-    // Debugging
-    // console.log(cipher);
-    // console.log(codes.length);
-    // console.log(Object.keys(cipher).length);
-    return cipher;
-}
-
-function setupChars()
-{
-    var codes = new Array();
-    var i = 33;
-    var letter;
-    while (i < 128)
-    {
-        letter = String.fromCharCode(i);
-        codes.push(letter);
-        i++;
-    }
-    codes.push(" ");
-    return codes;
-}
 
 
+/****************************
+**  Miscellaneous Helpers  **
+****************************/
 
-///////////////////////////
-// Miscellaneous Helpers //
-///////////////////////////
-
+/**
+* @purpose: gets the first object for which the key matches
+**/
 Object.prototype.getKeyByValue = function(value)
 {
     for (var key in this)
@@ -137,137 +123,3 @@ Object.prototype.getKeyByValue = function(value)
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// var cipher = { '0': 't',
-//   '1': 'S',
-//   '2': ' ',
-//   '3': 'm',
-//   '4': '9',
-//   '5': 'L',
-//   '6': 'h',
-//   '7': 'q',
-//   '8': 'B',
-//   '9': '4',
-//   u: 'd',
-//   d: 'u',
-//   '<': 'W',
-//   W: '<',
-//   m: '3',
-//   '$': '(',
-//   '(': '$',
-//   ' ': '2',
-//   B: '8',
-//   Q: '#',
-//   '#': 'Q',
-//   '[': ',',
-//   ',': '[',
-//   N: '\'',
-//   '\'': 'N',
-//   v: 'O',
-//   O: 'v',
-//   s: '?',
-//   '?': 's',
-//   ')': '`',
-//   '`': ')',
-//   '>': '}',
-//   '}': '>',
-//   q: '7',
-//   E: 'Z',
-//   Z: 'E',
-//   H: 'V',
-//   V: 'H',
-//   '.': '|',
-//   '|': '.',
-//   S: '1',
-//   D: 'y',
-//   y: 'D',
-//   n: '^',
-//   '^': 'n',
-//   '&': ':',
-//   ':': '&',
-//   J: '_',
-//   _: 'J',
-//   K: 'b',
-//   b: 'K',
-//   c: 'g',
-//   g: 'c',
-//   X: 'f',
-//   f: 'X',
-//   T: '-',
-//   '-': 'T',
-//   h: '6',
-//   r: '/',
-//   '/': 'r',
-//   '*': 'k',
-//   k: '*',
-//   M: '%',
-//   '%': 'M',
-//   I: 'i',
-//   i: 'I',
-//   '+': 'p',
-//   p: '+',
-//   R: ';',
-//   ';': 'R',
-//   j: 'l',
-//   l: 'j',
-//   U: 'w',
-//   w: 'U',
-//   '~': 'z',
-//   z: '~',
-//   t: '0',
-//   L: '5',
-//   ']': '=',
-//   '=': ']',
-//   '{': 'F',
-//   F: '{',
-//   e: 'P',
-//   P: 'e',
-//   '"': 'a',
-//   a: '"',
-//   o: 'x',
-//   x: 'o',
-//   '@': 'Y',
-//   Y: '@',
-//   '\\': 'G',
-//   G: '\\',
-//   C: '',
-//   '': 'C',
-//   '!': 'A',
-//   A: '!' };

@@ -1,24 +1,39 @@
-chrome.extension.onMessage.addListener(function(request, sender)
-{
-    console.log("background receives message from content script");
-    var message = processMessage(request.message);
-    returnMessage(message);
-})
+/***********************
+**  Helper Functions  **
+***********************/
 
-function processMessage(msg)
+/**
+* function deliverMessage(msg)
+* @purpose: delivers message to the tab that made original request
+* @param: msg: message being delivered
+**/
+function deliverMessage(msg)
 {
-    if (true)
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
     {
-        console.log("background processes message");
-    }
-    return msg;
-}
-
-function returnMessage(msg)
-{
-    chrome.tabs.getSelected(null, function(tab)
-    {
-        console.log("background sends message to content script");
-        chrome.tabs.sendMessage(tab.id, {message: msg});
+        chrome.tabs.sendMessage(tabs[0].id, {message: msg});
     })
 }
+
+
+
+/****************
+**  Listeners  **
+****************/
+
+/**
+* @purpose: delivers message on tab updated
+* @note: if no change, then changeInfo.url == undefined
+* @note: changeInfo.url grabs url of page that doesn't reload
+**/
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
+{
+    if (changeInfo.url == undefined)
+    {
+        deliverMessage(tab.url);
+    }
+    else
+    {
+        deliverMessage(changeInfo.url);
+    }
+})
