@@ -67,7 +67,7 @@ function storeUrl(url)
         }
         hyperlink.accesses.push({year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()});
         store(url, hyperlink);
-        console.log("Storing " + JSON.stringify(hyperlink) + " succeeded.");
+        // console.log("Storing " + JSON.stringify(hyperlink) + " succeeded.");
     })
 }
 
