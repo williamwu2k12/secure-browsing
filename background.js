@@ -28,12 +28,5 @@ function deliverMessage(msg)
 **/
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
-    if (changeInfo.url == undefined)
-    {
-        deliverMessage(tab.url);
-    }
-    else
-    {
-        deliverMessage(changeInfo.url);
-    }
+    deliverMessage(tab.url);
 })

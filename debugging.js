@@ -88,9 +88,14 @@ function decrypt(value)
 
 
 
-/********************
-**  Main Function  **
-********************/
+/*********************
+**  Main Functions  **
+*********************/
+
+function clearStorage()
+{
+    chrome.storage.local.clear();
+}
 
 function printStorage()
 {
