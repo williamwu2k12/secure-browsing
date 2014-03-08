@@ -123,3 +123,39 @@ Object.prototype.getKeyByValue = function(value)
         }
     }
 }
+
+
+
+/****************
+**  Debugging  **
+****************/
+
+/**
+* function clearStorage()
+* @purpose: deletes all items in storage area
+**/
+function clearStorage()
+{
+    chrome.storage.local.clear();
+}
+
+/**
+* function printStorage()
+* @purpose: prints the current state of the storage, decrypted
+**/
+function printStorage()
+{
+    chrome.storage.local.get(null, function(objects)
+    {
+        var allkeys = Object.keys(objects);
+        var allobjects = objects;
+        // console.log(allobjects);
+        for (var key in allobjects)
+        {
+            if (allobjects.hasOwnProperty(key))
+            {
+                console.log(decrypt(key) + ": " + decrypt(allobjects[key]));
+            }
+        }
+    });
+};

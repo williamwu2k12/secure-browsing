@@ -116,6 +116,30 @@
 
 
 
+
+
+
+
+// window.onload = function()
+// {
+//     chrome.storage.local.get(null, function(objects)
+//     {
+//         var links = document.getElementByTagName("a");
+//         for (var i = 0; i < links.length; i++)
+//         {
+//             if (objects[links[i]] != undefined)
+//             {
+//                 links[i].style.color = "red";
+//             }
+//         }
+//     })
+// }
+
+
+
+
+
+
 /****************************
 **  Example Key Detection  **
 ****************************/
