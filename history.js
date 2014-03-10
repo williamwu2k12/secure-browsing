@@ -1,4 +1,5 @@
 var cipher = { '0': 't', '1': 'S', '2': ' ', '3': 'm', '4': '9', '5': 'L', '6': 'h', '7': 'q', '8': 'B', '9': '4', u: 'd', d: 'u', '<': 'W', W: '<', m: '3', '$': '(', '(': '$', ' ': '2', B: '8', Q: '#', '#': 'Q', '[': ',', ',': '[', N: '\'', '\'': 'N', v: 'O', O: 'v', s: '?', '?': 's', ')': '`', '`': ')', '>': '}', '}': '>', q: '7', E: 'Z', Z: 'E', H: 'V', V: 'H', '.': '|', '|': '.', S: '1', D: 'y', y: 'D', n: '^', '^': 'n', '&': ':', ':': '&', J: '_', _: 'J', K: 'b', b: 'K', c: 'g', g: 'c', X: 'f', f: 'X', T: '-', '-': 'T', h: '6', r: '/', '/': 'r', '*': 'k', k: '*', M: '%', '%': 'M', I: 'i', i: 'I', '+': 'p', p: '+', R: ';', ';': 'R', j: 'l', l: 'j', U: 'w', w: 'U', '~': 'z', z: '~', t: '0', L: '5', ']': '=', '=': ']', '{': 'F', F: '{', e: 'P', P: 'e', '"': 'a', a: '"', o: 'x', x: 'o', '@': 'Y', Y: '@', '\\': 'G', G: '\\', C: '', '': 'C', '!': 'A', A: '!' };
+var page = 0;
 var users = {}; // all items in dictionary MUST be encrypted, good idea to look for other methods of password storing
 
 
@@ -28,6 +29,45 @@ function deleteUser(name, password)
 **  Login Options  **
 ********************/
 
+function showMore()
+{
+    var button = document.createElement("input");
+    button.type = "button";
+    button.value = "Show More";
+    button.className = "links";
+    button.onclick = function()
+    {
+        button.parentNode.removeChild(button);
+        chrome.storage.local.get(null, function(objects)
+        {
+            var i;
+            var keys = Object.keys(objects);
+            for (i = page * 30; i < (page * 30) + 30 && i < keys.length; i++)
+            {
+                addElement(objects, keys, i);
+            }
+            if (i >= keys.length)
+            {
+                button.parentNode.removeChild(button);
+            }
+            page++;
+            showMore();
+        });
+    }
+    document.body.appendChild(button);
+}
+
+
+function addElement(objectArray, keyArray, index)
+{
+    var object = JSON.parse(decrypt(objectArray[keyArray[index]]));
+    var newLink = document.createElement("div");
+    newLink.innerHTML = object["url"];
+    newLink.className = "links";
+    document.body.appendChild(newLink);
+}
+
+
 /**
 * function showHistory()
 * @purpose: shows the real history, iterating through the array of keys in storage
@@ -39,14 +79,12 @@ function showHistory()
     {
         clearBody();
         var keys = Object.keys(objects);
-        for (var i = 0; i < 30 && i < keys.length; i++)
+        for (var i = page * 30; i < (page * 30) + 30 && i < keys.length; i++)
         {
-            var object = JSON.parse(decrypt(objects[keys[i]]));
-            var newLink = document.createElement("div");
-            newLink.innerHTML = object["url"];
-            newLink.className = "links";
-            document.body.appendChild(newLink);
+            addElement(objects, keys, i);
         }
+        page++;
+        showMore();
     });
 }
 
@@ -58,14 +96,33 @@ function showHistory()
 function showHerstory()
 {
     clearBody();
-    for (var i = 0; i < 30; i++)
+    var createFakeLink = function()
     {
-        var object = {"url": "http://www.google.com", "accesses": []};
-        var newLink = document.createElement("div");
-        newLink.innerHTML = object["url"];
-        newLink.className = "links";
-        document.body.appendChild(newLink);
+        for (var i = 0; i < 30; i++)
+        {
+            var object = {"url": "http://www.google.com", "accesses": []};
+            var newLink = document.createElement("div");
+            newLink.innerHTML = object["url"];
+            newLink.className = "links";
+            document.body.appendChild(newLink);
+        }
     }
+    createFakeLink();
+    var createButton = function()
+    {
+        button = document.createElement("input");
+        button.type = "button";
+        button.value = "Show More";
+        button.className = "links";
+        button.onclick = function()
+        {
+            button.parentNode.removeChild(button);
+            createFakeLink();
+            createButton();
+        };
+        document.body.appendChild(button);
+    }
+    createButton();
 }
 
 /**
@@ -75,6 +132,7 @@ function showHerstory()
 **/
 function clearBody()
 {
+    page = 0;
     var elements = document.getElementsByClassName("links")
     var elementsLength = elements.length
     for (var i = 0; i < elementsLength; i++)
