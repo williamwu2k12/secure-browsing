@@ -22,9 +22,11 @@ var tabsets = {};
 * @purpose: delivers message on tab updated
 * @note: if no change, then changeInfo.url == undefined
 * @note: changeInfo.url grabs url of page that doesn't reload
+* @note: not sure if good idea to create new arrays from uncreated windows/tabs
 **/
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
+    // checkWindowTab(tab.windowId, tabId);
     if (changeInfo.url != undefined)
     {
         tabsets[tab.windowId][tabId].push(changeInfo.url);
@@ -54,6 +56,7 @@ chrome.tabs.onCreated.addListener(function(tab)
 **/
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo)
 {
+    // checkWindowTab(removeInfo.windowId, tabId);
     tabsets[removeInfo.windowId][tabId].push(null);
 })
 
@@ -71,6 +74,7 @@ chrome.windows.onCreated.addListener(function(window)
 **/
 chrome.windows.onRemoved.addListener(function(windowId)
 {
+    // checkWindowTab(windowId, null);
     tabsets[windowId][null] = null;
     var today = new Date();
     localStorage.setItem(JSON.stringify({year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()}), JSON.stringify({windowId: tabsets[windowId]}));
@@ -93,4 +97,21 @@ function deliverMessage(msg)
     {
         chrome.tabs.sendMessage(tabs[0].id, {message: msg});
     })
+}
+
+/**
+* function checkWindowTab()
+* @purpose: check whether there is a window or tab
+* @note: creates new empty dictionaries if no window or tab
+**/
+function checkWindowTab(windowId, tabId)
+{
+    if (tabsets[windowId] == undefined)
+    {
+        tabsets[windowId] = {};
+    }
+    if (tabsets[windowId][tabId] == undefined)
+    {
+        tabsets[windowId][tabId] = [];
+    }
 }
