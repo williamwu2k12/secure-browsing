@@ -34,6 +34,6 @@
     "<all_urls>"
   ],
 
-  "web_accessible_resources": ["fetch.js", "storage.js", "history.js"],
+  "web_accessible_resources": ["storage.js", "history.js"],
   "incognito": "split"
 }

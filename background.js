@@ -23,10 +23,18 @@ var tabsets = {};
 * @note: if no change, then changeInfo.url == undefined
 * @note: changeInfo.url grabs url of page that doesn't reload
 * @note: not sure if good idea to create new arrays from uncreated windows/tabs
+* @note: currently a bug where onupdated should detect when tab removed and add the appropriate url, but doesn't
 **/
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
-    // checkWindowTab(tab.windowId, tabId);
+    if (tabsets[tab.windowId] == undefined)
+    {
+        tabsets[tab.windowId] = {};
+    }
+    if (tabsets[tab.windowId][tabId] == undefined)
+    {
+        tabsets[tab.windowId][tabId] = [];
+    }
     if (changeInfo.url != undefined)
     {
         tabsets[tab.windowId][tabId].push(changeInfo.url);
@@ -46,6 +54,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 **/
 chrome.tabs.onCreated.addListener(function(tab)
 {
+    if (tabsets[tab.windowId] == undefined)
+    {
+        tabsets[tab.windowId] = {};
+    }
     tabsets[tab.windowId][tab.id] = [];
 })
 
@@ -56,7 +68,14 @@ chrome.tabs.onCreated.addListener(function(tab)
 **/
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo)
 {
-    // checkWindowTab(removeInfo.windowId, tabId);
+    if (tabsets[removeInfo.windowId] == undefined)
+    {
+        tabsets[removeInfo.windowId] = {};
+    }
+    if (tabsets[removeInfo.windowId][tabId] == undefined)
+    {
+        tabsets[removeInfo.windowId][tabId] = [];
+    }
     tabsets[removeInfo.windowId][tabId].push(null);
 })
 
@@ -74,7 +93,10 @@ chrome.windows.onCreated.addListener(function(window)
 **/
 chrome.windows.onRemoved.addListener(function(windowId)
 {
-    // checkWindowTab(windowId, null);
+    if (tabsets[windowId] == undefined)
+    {
+        tabsets[windowId] = {};
+    }
     tabsets[windowId][null] = null;
     var today = new Date();
     localStorage.setItem(JSON.stringify({year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()}), JSON.stringify({windowId: tabsets[windowId]}));
@@ -103,6 +125,7 @@ function deliverMessage(msg)
 * function checkWindowTab()
 * @purpose: check whether there is a window or tab
 * @note: creates new empty dictionaries if no window or tab
+* @note: should use, but something wrong so the functions are hardcoded
 **/
 function checkWindowTab(windowId, tabId)
 {
