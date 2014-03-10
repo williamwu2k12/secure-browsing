@@ -39,7 +39,7 @@ function showHistory()
     {
         clearBody();
         var keys = Object.keys(objects);
-        for (var i = 0; i < 30; i++)
+        for (var i = 0; i < 30 && i < keys.length; i++)
         {
             var object = JSON.parse(decrypt(objects[keys[i]]));
             var newLink = document.createElement("div");
