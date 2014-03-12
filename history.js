@@ -57,21 +57,11 @@ function showMore()
     document.body.appendChild(button);
 }
 
-
-function addElement(objectArray, keyArray, index)
-{
-    var object = JSON.parse(decrypt(objectArray[keyArray[index]]));
-    var newLink = document.createElement("div");
-    newLink.innerHTML = object["url"];
-    newLink.className = "links";
-    document.body.appendChild(newLink);
-}
-
-
 /**
 * function showHistory()
 * @purpose: shows the real history, iterating through the array of keys in storage
 * @note: needs to be changed to reflect only recent elements
+* @note: the keys may need to be sorted, but sorting millions of items will be time consuming
 **/
 function showHistory()
 {
@@ -79,6 +69,15 @@ function showHistory()
     {
         clearBody();
         var keys = Object.keys(objects);
+        for (var i = 0; i < keys.length; i++)
+        {
+            keys[i] = decrypt(keys[i]);
+        }
+        keys = keys.sort(function(a, b){return b - a});
+        for (var i = 0; i < keys.length; i++)
+        {
+            keys[i] = encrypt(keys[i]);
+        }
         for (var i = page * 30; i < (page * 30) + 30 && i < keys.length; i++)
         {
             addElement(objects, keys, i);
@@ -89,18 +88,17 @@ function showHistory()
 }
 
 /**
-* function showHerstory()
+* function showFakestory()
 * @purpose: show fake history for emergency logins
-* @note: name may be bad for publicity, probably a good idea to change, but it's funny
 **/
-function showHerstory()
+function showFakestory()
 {
     clearBody();
     var createFakeLink = function()
     {
         for (var i = 0; i < 30; i++)
         {
-            var object = {"url": "http://www.google.com", "accesses": []};
+            var object = {"url": "http://www.google.com", "tags": null};
             var newLink = document.createElement("div");
             newLink.innerHTML = object["url"];
             newLink.className = "links";
@@ -157,7 +155,7 @@ function login(name, password)
     }
     else if (name == "William" && password == "notsecret")
     {
-        showHerstory();
+        showFakestory();
     }
     else if (name == "William" && password == "doomsday")
     {
@@ -167,6 +165,31 @@ function login(name, password)
     {
         alert("Username and password combination incorrect. Please try again.") // we can also implement that if you try too many times, chrome.storage.local will automatically clear itself (good for preventing brute force attacks)
     }
+}
+
+
+
+/***********************
+**  Helper Functions  **
+***********************/
+
+/**
+* function addElement(objectArray, keyArray, index)
+* @purpose: adds a link element to the body of history.html
+* @param: objectArray: the array of objects to access, usually chrome.storage.local.get(null, function(objects))
+* @param: keyArray: the array of keys
+* @param: index: the index of the desired key in the keyArray
+* @note: missing some abstraction possibly
+**/
+function addElement(objectArray, keyArray, index)
+{
+    var object = JSON.parse(decrypt(objectArray[keyArray[index]]));
+    var newLink = document.createElement("div");
+    var key = decrypt(keyArray[index]);
+    key = key.substring(0, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 14) + ":" + key.substring(14, 17);
+    newLink.innerHTML = key + " : " + object["url"];
+    newLink.className = "links";
+    document.body.appendChild(newLink);
 }
 
 

@@ -33,11 +33,13 @@ function get(key)
 * @purpose: constructor creating the main history object
 * @param: address: the url accessed
 * @note: needs to be updated with more fields later, structure possibly changed
+* @note: what information about the link and the visit is important
+* @note: consider keylogging, have it be user turned on or off
 **/
-function link(address)
+function link(address, labels)
 {
     this.url = address;
-    this.accesses = [];
+    this.tags = labels; // should be list of strings, first item in tags should always be the title string
     // this.bookmarks = [];
     // this.tags = [];
     // this.session = [];
@@ -49,24 +51,14 @@ function link(address)
 * @purpose: stores the url, access data, and other information of the visit
 * @param: url: the url to be stored
 * @note: url should be interchangeable with location.href
-* @note: checks to make sure that the url is not empty
+* @note: make sure that on window close, links closed simultaneously do not overwrite each other
 **/
 function storeUrl(url)
 {
     StorageArea.get(encrypt(url), function(object)
     {
-        var hyperlink = object[encrypt(url)];
-        var today = new Date();
-        if (hyperlink == undefined)
-        {
-            hyperlink = new link(url);
-        }
-        else
-        {
-            hyperlink = JSON.parse(decrypt(hyperlink));
-        }
-        hyperlink.accesses.push({year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()});
-        store(url, hyperlink);
+        var hyperlink = new link(url, null);
+        store(convertDate(), hyperlink);
         // console.log("Storing " + JSON.stringify(hyperlink) + " succeeded.");
     })
 }
@@ -103,9 +95,9 @@ function decrypt(value)
 
 
 
-/****************************
-**  Miscellaneous Helpers  **
-****************************/
+/***********************
+**  Helper Functions  **
+***********************/
 
 /**
 * @purpose: gets the first object for which the key matches
@@ -122,6 +114,51 @@ Object.prototype.getKeyByValue = function(value)
             }
         }
     }
+}
+
+/**
+* function convertDate()
+* @purpose: converts the date format to a string with only integers
+* @note: in history.js, the returned value of this is spliced with ":" for better viewing
+**/
+function convertDate()
+{
+    var today = new Date();
+    var month = today.getMonth() + 1;
+    var day = today.getDate();
+    var hour = today.getHours();
+    var minute = today.getMinutes();
+    var second = today.getSeconds();
+    var millisecond = today.getMilliseconds();
+    if (month < 10)
+    {
+        month = "0" + month;
+    }
+    if (day < 10)
+    {
+        day = "0" + day;
+    }
+    if (hour < 10)
+    {
+        hour = "0" + hour;
+    }
+    if (minute < 10)
+    {
+        minute = "0" + minute;
+    }
+    if (second < 10)
+    {
+        second = "0" + second;
+    }
+    if (millisecond < 100)
+    {
+        if (millisecond < 10)
+        {
+            millisecond = "0" + millisecond;
+        }
+        millisecond = "0" + millisecond;
+    }
+    return "" + today.getFullYear() + month + day + hour + minute + second + millisecond;
 }
 
 

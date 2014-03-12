@@ -99,7 +99,7 @@ chrome.windows.onRemoved.addListener(function(windowId)
     }
     tabsets[windowId][null] = null;
     var today = new Date();
-    localStorage.setItem(JSON.stringify({year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate(), hour: today.getHours(), minute: today.getMinutes(), second: today.getSeconds(), milliseconds: today.getMilliseconds()}), JSON.stringify({windowId: tabsets[windowId]}));
+    localStorage.setItem(convertDate(), JSON.stringify({windowId: tabsets[windowId]}));
 })
 
 
