@@ -38,7 +38,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
     if (changeInfo.url != undefined)
     {
         tabsets[tab.windowId][tabId].push(changeInfo.url);
-        storeUrl(changeInfo.url);
+        storeUrl(changeInfo.url, null, tab.incognito);
     }
 })
 /**

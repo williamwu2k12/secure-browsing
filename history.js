@@ -41,14 +41,10 @@ function showMore()
         chrome.storage.local.get(null, function(objects)
         {
             var i;
-            var keys = Object.keys(objects);
-            for (i = page * 30; i < (page * 30) + 30 && i < keys.length; i++)
+            var keys = Object.keys(objects); // implement some logic here to get rid of button once finished
+            for (i = page * 100; i < (page * 100) + 100 && i < keys.length; i++)
             {
                 addElement(objects, keys, i);
-            }
-            if (i >= keys.length)
-            {
-                button.parentNode.removeChild(button);
             }
             page++;
             showMore();
@@ -78,7 +74,7 @@ function showHistory()
         {
             keys[i] = encrypt(keys[i]);
         }
-        for (var i = page * 30; i < (page * 30) + 30 && i < keys.length; i++)
+        for (var i = page * 100; i < (page * 100) + 100 && i < keys.length; i++)
         {
             addElement(objects, keys, i);
         }
@@ -96,7 +92,7 @@ function showFakestory()
     clearBody();
     var createFakeLink = function()
     {
-        for (var i = 0; i < 30; i++)
+        for (var i = 0; i < 100; i++)
         {
             var object = {"url": "http://www.google.com", "tags": null};
             var newLink = document.createElement("div");
@@ -157,7 +153,7 @@ function login(name, password)
     {
         showFakestory();
     }
-    else if (name == "William" && password == "doomsday")
+    else if (name == "William" && password == "clear")
     {
         chrome.storage.local.clear();
     }
@@ -187,7 +183,7 @@ function addElement(objectArray, keyArray, index)
     var newLink = document.createElement("div");
     var key = decrypt(keyArray[index]);
     key = key.substring(0, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 14) + ":" + key.substring(14, 17);
-    newLink.innerHTML = key + " : " + object["url"];
+    newLink.innerHTML = key + " : " + object["url"] + " : " + object["tags"] + " : " + object["state"];
     newLink.className = "links";
     document.body.appendChild(newLink);
 }

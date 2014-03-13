@@ -35,11 +35,13 @@ function get(key)
 * @note: needs to be updated with more fields later, structure possibly changed
 * @note: what information about the link and the visit is important
 * @note: consider keylogging, have it be user turned on or off
+* @note: problem with getting document.title using tab.title, gives incorrect title, may need to use message passing
 **/
-function link(address, labels)
+function link(address, labels, incognito)
 {
     this.url = address;
-    this.tags = labels; // should be list of strings, first item in tags should always be the title string
+    this.tags = labels; // should be list of strings, first item in tags should always be the title string (document.title)
+    this.state = incognito
     // this.bookmarks = [];
     // this.tags = [];
     // this.session = [];
@@ -53,11 +55,11 @@ function link(address, labels)
 * @note: url should be interchangeable with location.href
 * @note: make sure that on window close, links closed simultaneously do not overwrite each other
 **/
-function storeUrl(url)
+function storeUrl(url, tags, state)
 {
     StorageArea.get(encrypt(url), function(object)
     {
-        var hyperlink = new link(url, null);
+        var hyperlink = new link(url, tags, state);
         store(convertDate(), hyperlink);
         // console.log("Storing " + JSON.stringify(hyperlink) + " succeeded.");
     })
