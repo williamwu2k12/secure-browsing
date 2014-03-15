@@ -47,7 +47,10 @@ function showMore()
                 addElement(objects, keys, i);
             }
             page++;
-            showMore();
+            if (keys[page * 100] != undefined)
+            {
+                showMore();
+            }
         });
     }
     document.body.appendChild(button);
@@ -79,7 +82,10 @@ function showHistory()
             addElement(objects, keys, i);
         }
         page++;
-        showMore();
+        if (keys[page * 100] != undefined)
+        {
+            showMore();
+        }
     });
 }
 
