@@ -12,7 +12,18 @@ function store(key, value)
 {
     var object = {};
     object[encrypt(key)] = encrypt(JSON.stringify(value));
-    StorageArea.set(object);
+    StorageArea.set(object, function()
+    {
+        StorageArea.get("keys", function(dict)
+        {
+            if (dict["keys"] == undefined)
+            {
+                dict["keys"] = [];
+            }
+            dict["keys"].push(encrypt(key));
+            StorageArea.set(dict);
+        })
+    });
 }
 
 /**
@@ -41,9 +52,8 @@ function link(address, labels, incognito)
 {
     this.url = address;
     this.tags = labels; // should be list of strings, first item in tags should always be the title string (document.title)
-    this.state = incognito
+    this.state = incognito;
     // this.bookmarks = [];
-    // this.tags = [];
     // this.session = [];
     // this.searches = [];
 }
@@ -186,15 +196,22 @@ function printStorage()
 {
     chrome.storage.local.get(null, function(objects)
     {
-        var allkeys = Object.keys(objects);
-        var allobjects = objects;
-        // console.log(allobjects);
-        for (var key in allobjects)
+        // var allkeys = Object.keys(objects);
+        // var allobjects = objects;
+        // // console.log(allobjects);
+        // for (var key in allobjects)
+        // {
+        //     if (allobjects.hasOwnProperty(key))
+        //     {
+        //         console.log(decrypt(key) + ": " + decrypt(allobjects[key]));
+        //     }
+        // }
+        var keys = Object.keys(objects);
+        keys.splice(keys.indexOf("keys"), 1);
+        for (var i = 0; i < keys.length; i++)
         {
-            if (allobjects.hasOwnProperty(key))
-            {
-                console.log(decrypt(key) + ": " + decrypt(allobjects[key]));
-            }
+            console.log(decrypt(keys[i]) + " : " + decrypt(objects[keys[i]]));
         }
+        console.log(objects["keys"]);
     });
 };

@@ -40,14 +40,13 @@ function showMore()
         button.parentNode.removeChild(button);
         chrome.storage.local.get(null, function(objects)
         {
-            var i;
-            var keys = Object.keys(objects); // implement some logic here to get rid of button once finished
-            for (i = page * 100; i < (page * 100) + 100 && i < keys.length; i++)
+            var linkKeys = objects["keys"];
+            for (i = linkKeys.length - 1 - page * 100; i > -1 && i > linkKeys.length - 1 - 100 - (page * 100); i--)
             {
-                addElement(objects, keys, i);
+                addElement(decrypt(linkKeys[i]), decrypt(objects[linkKeys[i]]));
             }
             page++;
-            if (keys[page * 100] != undefined)
+            if (linkKeys[linkKeys.length - 1 - page * 100] != undefined)
             {
                 showMore();
             }
@@ -67,26 +66,17 @@ function showHistory()
     chrome.storage.local.get(null, function(objects)
     {
         clearBody();
-        var keys = Object.keys(objects);
-        for (var i = 0; i < keys.length; i++)
+        var linkKeys = objects["keys"];
+        for (var i = linkKeys.length - 1; i > -1 && i > linkKeys.length - 1 - 100 - (page * 100); i--)
         {
-            keys[i] = decrypt(keys[i]);
-        }
-        keys = keys.sort(function(a, b){return b - a});
-        for (var i = 0; i < keys.length; i++)
-        {
-            keys[i] = encrypt(keys[i]);
-        }
-        for (var i = page * 100; i < (page * 100) + 100 && i < keys.length; i++)
-        {
-            addElement(objects, keys, i);
+            addElement(decrypt(linkKeys[i]), decrypt(objects[linkKeys[i]]));
         }
         page++;
-        if (keys[page * 100] != undefined)
+        if (linkKeys[linkKeys.length - 1 - page * 100] != undefined)
         {
             showMore();
         }
-    });
+    })
 }
 
 /**
@@ -182,18 +172,16 @@ function login(name, password)
 * @param: keyArray: the array of keys
 * @param: index: the index of the desired key in the keyArray
 * @note: missing some abstraction possibly
+* @note: lots of changes to this method, showHistory, and showMore, go back in commit history, updated 14.03.15
 **/
-function addElement(objectArray, keyArray, index)
+function addElement(key, object)
 {
-    var object = JSON.parse(decrypt(objectArray[keyArray[index]]));
     var newLink = document.createElement("div");
-    var key = decrypt(keyArray[index]);
-    key = key.substring(0, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 14) + ":" + key.substring(14, 17);
-    newLink.innerHTML = key + " : " + object["url"] + " : " + object["tags"] + " : " + object["state"];
+    var theLink = JSON.parse(object);
+    newLink.innerHTML = key.substring(0, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 14) + ":" + key.substring(14, 17) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
     newLink.className = "links";
     document.body.appendChild(newLink);
 }
-
 
 
 /****************
