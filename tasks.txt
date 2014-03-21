@@ -1,0 +1,39 @@
+Tasks and Interfaces
+
+William Wu
+- anything and everything he wants
+- general structure and backbone for the extension
+
+Miles Dismond
+- history analytics, backend development
+    - graph of site access by date over time
+    - graph of most visited and popular sites
+        - suggestions of similar sites
+    - table of most used search terms (keylogger necessary, or grab at button click?)
+        - suggestions of similar search terms
+
+Shiv Sundram
+- data encryption, password protection, security
+    - user creation, deleting, changing
+    - database organization, localStorage vs chrome.storage.local (latter for long term safe storage)
+    - access optimization, storage consideration
+        - separate dictionary entries with arrays of only keys, such as tabsets, windowsets, urls as keys
+        - gradually update while browsing, such that analytics will take much less time
+
+Andrew Truong
+- user interface for history.html
+    - three sections/subpages, history, analytics, and settings
+- analytics subpage
+    - graph view, table view, chart view
+- settings subpage
+    - login button
+    - log history only when in incognito
+    - clear all history
+
+Kevin Huynh
+- user interface for popup.html
+    - short list view for access to recent links
+    - short list view for access to recent tabsets
+    - login button changing a boolean
+    - links to subpages, history, analytics, and settings
+    - quick links to settings, turn off functionality, etc.
