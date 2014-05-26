@@ -46,7 +46,36 @@ Kelvin Leong
 Current Tasks
 
 ** remove from list and commit with details when you complete a task below **
-- remove a link from the history data structure
+
+- WE NEED TO TALK ABOUT HOW OUR DATA STRUCTURE IS GOING TO WORK BECAUSE WE HAVEN'T ESTABLISHED AN EFFECTIVE INTERFACE YET
+- implement remove a link from the history data structure
+- optimize memory efficiency in json storage of link data
 - optimize the storage in dictionary such that storing is efficient (split on each week or month)
 - figure out why the extension crashes computer, suspect it may be the keys array making access difficult
 - testing module, inserting links and "autobrowsing" to test whether anything will break
+- in analytics, construct a visual "search tree" that shows the user a single browsing session and animates the search pattern of the user (where clicks relate parents and children, and text searches create a soft relationship or creates a new tree)
+
+
+
+Data Structure for Link Storage
+
+- all items are stored as dictionary key value pairs in chrome.storage.local (though we aren't given the implementations)
+    - includes actual link class objects, stringified from json format
+    - includes reference arrays, sorted by date, which point to the link objects
+        - consider other forms of sorting, such as by link domain (will be useful later in analytics), though this comes at memory cost
+- runtimes
+    - access of link at time: theta(1)
+        - directly access dictionary
+        - memory being loaded (when array is accessed) is going to be n / c, where c is some constant relative to number of date subarrays
+            - goal here is to minimize the amount of memory being accessed
+            - since we don't have chrome.storage.local.get(item, function(callback){}) implementation, we don't know if the entire dictionary is accessed when making a call
+    - adding a link: theta(1)
+        - hash to dictionary, then push to top of sorted array
+    - removing a link: theta(1)
+        - remove dictionary item, remove reference in sorted array (which may take logn time because of array shift)
+- sample size
+    - assume 1000 links per day, don't remember the number of bytes necessary for a character in a string
+        - assume 1 byte each character
+    - assume 100 characters each string, 50 characters for url, 50 characters for date and other information
+    - 365 days per year, so 365 * 1000 * 100 * 1 == 36500000 == 36.5 * 10^6 == 36.5 megabytes
+        - reasonable size for one year

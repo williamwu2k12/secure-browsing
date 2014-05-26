@@ -67,8 +67,15 @@ function link(address, labels, incognito)
     this.tags = labels; // should be list of strings, first item in tags should always be the title string (document.title)
     this.state = incognito;
     // this.bookmarks = [];
-    // this.session = [];
+    // this.sessions = [];
     // this.searches = [];
+    // this.popularity = 0;
+    // this.parents = [];
+    // this.children = [];
+    // this.scroll = 0;
+    // this.clicks = [];
+    // this.keypresses = []; // careful on logging, security issue here, but can partially remember form info
+    // this.accesses = [];
 }
 
 /**
