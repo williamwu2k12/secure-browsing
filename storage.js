@@ -12,17 +12,30 @@ function store(key, value)
 {
     var object = {};
     object[encrypt(key)] = encrypt(JSON.stringify(value));
-    StorageArea.set(object, function()
+    chrome.storage.local.set(object, function()
     {
-        StorageArea.get("keys", function(dict)
+        // this should split the keys into more manageable arrays, considering average number of links is 1000 per day, and a month would be 30000
+        // change from convertDate().substring(2, 6) to convertDate().substring(2, 8) to split into days instead of months
+        // var month = "keys" + convertDate().substring(2, 6);
+        // chrome.storage.local.get(month, function(keys))
+        // {
+        //     if (keys[month] == undefined)
+        //     {
+        //         keys[month] = [];
+        //     }
+        //     keys[month].push(encrypt(key));
+        //     chrome.storage.local.set(keys);
+        // }
+
+        chrome.storage.local.get("keys", function(dict)
         {
             if (dict["keys"] == undefined)
             {
                 dict["keys"] = [];
             }
             dict["keys"].push(encrypt(key));
-            StorageArea.set(dict);
-        })
+            chrome.storage.local.set(dict);
+        });
     });
 }
 
@@ -33,7 +46,7 @@ function store(key, value)
 **/
 function get(key)
 {
-    StorageArea.get(key, function(object)
+    chrome.storage.local.get(key, function(object)
     {
         console.log(decrypt(object[decrypt(key)]));
     });
@@ -67,7 +80,7 @@ function link(address, labels, incognito)
 **/
 function storeUrl(url, tags, state)
 {
-    StorageArea.get(encrypt(url), function(object)
+    chrome.storage.local.get(encrypt(url), function(object)
     {
         var hyperlink = new link(url, tags, state);
         store(convertDate(), hyperlink);

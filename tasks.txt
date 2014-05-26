@@ -1,4 +1,4 @@
-Tasks and Interfaces
+Assignments and Interfaces
 
 William Wu
 - anything and everything he wants
@@ -37,3 +37,16 @@ Kevin Huynh
     - login button changing a boolean
     - links to subpages, history, analytics, and settings
     - quick links to settings, turn off functionality, etc.
+
+Kelvin Leong
+- up to you, fill in what you want to do
+
+
+
+Current Tasks
+
+** remove from list and commit with details when you complete a task below **
+- remove a link from the history data structure
+- optimize the storage in dictionary such that storing is efficient (split on each week or month)
+- figure out why the extension crashes computer, suspect it may be the keys array making access difficult
+- testing module, inserting links and "autobrowsing" to test whether anything will break

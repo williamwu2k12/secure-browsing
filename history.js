@@ -8,19 +8,69 @@ var users = {}; // all items in dictionary MUST be encrypted, good idea to look 
 **  Account Options  **
 **********************/
 
-function createUser(name, password)
+function user(name, master, key1, key2)
 {
-
+    if (master == key1 || master == key2 || key1 == key2) // making sure no two passwords are the same
+    {
+        console.log("Passwords can not be the same")
+        return;
+    }
+    this.name = name;
+    this.password = master;
+    this.key1 = key1;
+    this.key2 = key2;
 }
 
-function changePassword(name, oldPassword, newPassword)
+function createUser(name, master, key1, key2)
 {
-
+    var account = new user(name, master, key1, key2);
+    if (account != undefined)
+    {
+        users[name] = account;
+    }
+    else
+    {
+        console.log("Error creating account");
+    }
 }
 
-function deleteUser(name, password)
+function changePassword(name, master, type, oldKey, newKey)
 {
+    var account = users[name];
+    if (account == undefined)
+    {
+        console.log("Invalid account name");
+        return;
+    }
+    if (master != account.password)
+    {
+        console.log("Invalid master password");
+        return;
+    }
+    if (type == "password")
+    {
+        account.password = newKey;
+    }
+    if (type == "key1" && account.key1 == oldKey)
+    {
+        account.key1 = newKey;
+    }
+    if (type == "key2" && account.key2 == oldKey)
+    {
+        account.key2 = newKey;
+    }
+}
 
+function deleteUser(name, master)
+{
+    if (users[name].password == master)
+    {
+        delete users[name];
+    }
+    else
+    {
+        console.log("Invalid master password");
+    }
 }
 
 
@@ -214,3 +264,5 @@ function onSubmitted()
 * @purpose: adds listener to find out when the submit button pressed
 **/
 window.addEventListener("load", onSubmitted, false);
+
+createUser("William", "secret", "notsecret", "clear");
