@@ -3,82 +3,92 @@
     <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <style>
-        body
-        {
-            font-family: "Verdana";
-            min-width: 250px;
-            min-height: 300px;
-        }
-        h1
-        {
-            font-size: 18px;
-        }
-        h2
-        {
-            font-size: 15px;
-        }
-        table
-        {
-            font-size: 12px;
-        }
-        div
-        {
-            font-size: 12px;
-        }
+            body
+            {
+                font-family: "Verdana";
+                min-width: 250px;
+                max-width: 250px;
+            }
+            h1
+            {
+                font-size: 18px;
+            }
+            h2
+            {
+                font-size: 15px;
+            }
+            table
+            {
+                font-size: 12px;
+            }
+            div
+            {
+                font-size: 12px;
+            }
+            #login
+            {
+                display: block;
+            }
+            #menu
+            {
+                display: none;
+            }
+            #links
+            {
+                display: none;
+            }
         </style>
         <title></title>
+        <script src="/popup.js"></script>
     </head>
     <body>
-        <script src="/storage.js"></script>
-        <script src="/history.js"></script>
-        
         <h1>Secure Browsing</h1>
 
-        <form id="login" name="input">
+        <form id="login" name="login">
             <table>
                 <tr>
-                    <td align="left">Username:</td>
-                    <td align="left"><input type="text" name="username" /></td>
+                    <td align="left">Username:&nbsp</td>
+                    <td align="left"><input type="text" name="username" size="28"></td>
                 </tr>
                 <tr>
-                    <td align="left">Password:</td>
-                    <td align="left"><input type="password" name="password" /></td>
+                    <td align="left">Password:&nbsp</td>
+                    <td align="left"><input type="password" name="password" size="28"></td>
                 </tr>
                 <tr>
                     <td align="left"></td>
-                    <td align="left"><input value="Submit" type="submit"></td>
+                    <td align="left"><input type="submit" value="Submit"></td>
+                    <!-- <td align="left"><input type="button" name="submit" value="Submit"></td> -->
                 </tr>
             </table>
         </form>
 
-        <table width="100%">
+        <table id="menu" width="100%">
             <tr>
                 <td align="center">
-                    <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000;"><input type="image" id="history" src="/resources/images/history.png" width="auto" height="50%"><br>History</a>
+                    <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input type="image" id="history" src="/resources/images/history.png" width="auto" height="50%"><br>History</a>
                 </td>
                 <td align="center">
-                    <a href="/statistics.html/" target="_blank" style="text-decoration: none; color: #000000;"><input type="image" id="statistics" src="/resources/images/statistics.png" width="auto" height="50%"><br>Statistics</a>
+                    <a href="/statistics.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input type="image" id="statistics" src="/resources/images/statistics.png" width="auto" height="50%"><br>Statistics</a>
                 </td>
                 <td align="center">
-                    <a href="/settings.html/" style="text-decoration: none; color: #000000;"><input type="image" id="settings" src="/resources/images/settings.png" width="auto" height="50%"><br>Settings</a>
+                    <a href="/settings.html/" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input type="image" id="settings" src="/resources/images/settings.png" width="auto" height="50%"><br>Settings</a>
                 </td>
             </tr>
         </table>
 
-        <h2>Recently Visited</h2>
-        <div>
-            <a href="http://www.facebook.com/" target="_blank">http://www.facebook.com/</a><br>
-            <a href="http://www.imgur.com/" target="_blank">http://www.imgur.com/</a><br>
-            <a href="http://www.reddit.com/" target="_blank">http://www.reddit.com/</a><br>
-            <a href="http://bearfacts.berkeley.edu/" target="_blank">http://bearfacts.berkeley.edu/</a><br>
-            <a href="http://www.quora.com/" target="_blank">http://www.quora.com/</a><br>
-            <a href="http://www.github.com/" target="_blank">http://www.github.com/</a><br>
-            <a href="http://www.speedtest.net/" target="_blank">http://www.speedtest.net/</a><br>
-            <a href="http://en.wikipedia.com/" target="_blank">http://en.wikipedia.com/</a><br>
-            <a href="http://www.explosm.com/" target="_blank">http://www.explosm.com/</a><br><br>
-            <button type="button" href="/history.html">History</button><br>
-            <button type="button" href="/statistics.html">Statistics</button><br>
-            <button type="button" href="/settings.html">Settings</button><br>
+        <div id="links">
+            <h2>Recently Visited</h2>
+            <div>
+                <a href="http://www.facebook.com/" target="_blank">http://www.facebook.com/</a><br>
+                <a href="http://www.imgur.com/" target="_blank">http://www.imgur.com/</a><br>
+                <a href="http://www.reddit.com/" target="_blank">http://www.reddit.com/</a><br>
+                <a href="http://bearfacts.berkeley.edu/" target="_blank">http://bearfacts.berkeley.edu/</a><br>
+                <a href="http://www.quora.com/" target="_blank">http://www.quora.com/</a><br>
+                <a href="http://www.github.com/" target="_blank">http://www.github.com/</a><br>
+                <a href="http://www.speedtest.net/" target="_blank">http://www.speedtest.net/</a><br>
+                <a href="http://en.wikipedia.com/" target="_blank">http://en.wikipedia.com/</a><br>
+                <a href="http://www.explosm.com/" target="_blank">http://www.explosm.com/</a><br><br>
+            </div>
         </div>
     </body>
 </html>

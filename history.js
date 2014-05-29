@@ -191,18 +191,6 @@ function clearBody()
 
 function login(name, password)
 {
-    // if (name == "William" && password == "secret")
-    // {
-    //     showHistory();
-    // }
-    // else if (name == "William" && password == "notsecret")
-    // {
-    //     showFakestory();
-    // }
-    // else if (name == "William" && password == "clear")
-    // {
-    //     chrome.storage.local.clear();
-    // }
     if (password == users[name].password)
     {
         showHistory();
@@ -260,15 +248,7 @@ function onSubmitted()
     document.getElementById("login").addEventListener("submit", function(event)
     {
         event.preventDefault();
-        var userData = [];
-        for (var i = 0, j = this.childNodes.length; i < j; i++)
-        {
-            if (this.childNodes[i].value != "" && this.childNodes[i].value != undefined)
-            {
-                userData.push(this.childNodes[i].value);
-            }
-        }
-        login(userData[0], userData[1]);
+        login(this.username.value, this.password.value);
     })
 }
 
