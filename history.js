@@ -191,15 +191,27 @@ function clearBody()
 
 function login(name, password)
 {
-    if (name == "William" && password == "secret")
+    // if (name == "William" && password == "secret")
+    // {
+    //     showHistory();
+    // }
+    // else if (name == "William" && password == "notsecret")
+    // {
+    //     showFakestory();
+    // }
+    // else if (name == "William" && password == "clear")
+    // {
+    //     chrome.storage.local.clear();
+    // }
+    if (password == users[name].password)
     {
         showHistory();
     }
-    else if (name == "William" && password == "notsecret")
+    else if (password == users[name].key1)
     {
         showFakestory();
     }
-    else if (name == "William" && password == "clear")
+    else if (password == users[name].key2)
     {
         chrome.storage.local.clear();
     }
@@ -265,4 +277,4 @@ function onSubmitted()
 **/
 window.addEventListener("load", onSubmitted, false);
 
-createUser("William", "secret", "notsecret", "clear");
+createUser("william", "secret", "notsecret", "clear");

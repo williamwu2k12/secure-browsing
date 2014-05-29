@@ -1,119 +1,84 @@
 <!doctype html>
 <html>
     <head>
-        <title>Secure Browsing</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <style>
-            body
-            {
-                min-width: 300px;
-                min-height: 300px;
-            }
+        body
+        {
+            font-family: "Verdana";
+            min-width: 250px;
+            min-height: 300px;
+        }
+        h1
+        {
+            font-size: 18px;
+        }
+        h2
+        {
+            font-size: 15px;
+        }
+        table
+        {
+            font-size: 12px;
+        }
+        div
+        {
+            font-size: 12px;
+        }
         </style>
-        <style>
-            div
-            {
-                font-family: "Lucida Grande";
-                font-size: 13px;
-            }
-            nav ul ul
-            {
-                display: none;
-            }
-            nav ul li:hover > ul
-            {
-                display: block;
-            }
-            nav ul
-            {
-                padding: 0 20px;
-                border-radius: 10px;
-                list-style: none;
-                position: relative;
-                display: inline-table;
-            }
-            
-
-/*            nav ul
-            {
-                background: #efefef; 
-                background: linear-gradient(top, #efefef 0%, #bbbbbb 100%);  
-                background: -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%); 
-                background: -webkit-linear-gradient(top, #efefef 0%,#bbbbbb 100%); 
-                box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
-                padding: 0 20px;
-                border-radius: 10px;  
-                list-style: none;
-                position: relative;
-                display: inline-table;
-            }
-            nav ul:after
-            {
-                content: ""; clear: both; display: block;
-            }
-            nav ul li
-            {
-                float: left;
-            }
-            nav ul li:hover
-            {
-                background: #4b545f;
-                background: linear-gradient(top, #4f5964 0%, #5f6975 40%);
-                background: -moz-linear-gradient(top, #4f5964 0%, #5f6975 40%);
-                background: -webkit-linear-gradient(top, #4f5964 0%,#5f6975 40%);
-            }
-            nav ul li:hover a
-            {
-                color: #fff;
-            }
-            nav ul li a
-            {
-                display: block; padding: 25px 40px;
-                color: #757575; text-decoration: none;
-            }
-            nav ul ul
-            {
-                background: #5f6975; border-radius: 0px; padding: 0;
-                position: absolute; top: 100%;
-            }
-            nav ul ul li
-            {
-                float: none; 
-                border-top: 1px solid #6b727c;
-                border-bottom: 1px solid #575f6a;
-                position: relative;
-            }
-            nav ul ul li a
-            {
-                padding: 15px 40px;
-                color: #fff;
-            }   
-            nav ul ul li a:hover
-            {
-                background: #4b545f;
-            }*/
-        </style>
+        <title></title>
     </head>
     <body>
+        <script src="/storage.js"></script>
+        <script src="/history.js"></script>
+        
+        <h1>Secure Browsing</h1>
+
+        <form id="login" name="input">
+            <table>
+                <tr>
+                    <td align="left">Username:</td>
+                    <td align="left"><input type="text" name="username" /></td>
+                </tr>
+                <tr>
+                    <td align="left">Password:</td>
+                    <td align="left"><input type="password" name="password" /></td>
+                </tr>
+                <tr>
+                    <td align="left"></td>
+                    <td align="left"><input value="Submit" type="submit"></td>
+                </tr>
+            </table>
+        </form>
+
+        <table width="100%">
+            <tr>
+                <td align="center">
+                    <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000;"><input type="image" id="history" src="/resources/images/history.png" width="auto" height="50%"><br>History</a>
+                </td>
+                <td align="center">
+                    <a href="/statistics.html/" target="_blank" style="text-decoration: none; color: #000000;"><input type="image" id="statistics" src="/resources/images/statistics.png" width="auto" height="50%"><br>Statistics</a>
+                </td>
+                <td align="center">
+                    <a href="/settings.html/" style="text-decoration: none; color: #000000;"><input type="image" id="settings" src="/resources/images/settings.png" width="auto" height="50%"><br>Settings</a>
+                </td>
+            </tr>
+        </table>
+
+        <h2>Recently Visited</h2>
         <div>
-            <nav>
-                <ul>
-                    <li>History
-                        <ul>
-                            <li><a href="/history.html/" target="_blank">HISTORY</a></li>
-                        </ul>
-                    </li>
-                    <li>Recent
-                        <ul>
-                            <li><a href="http://www.facebook.com" target="_blank">Facebook</a></li>
-                            <li><a href="http://www.google.com" target="_blank">Google</a></li>
-                            <li><a href="http://www.imgur.com" target="_blank">Imgur</a></li>
-                            <li><a href="http://www.yahoo.com" target="_blank">Yahoo</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
+            <a href="http://www.facebook.com/" target="_blank">http://www.facebook.com/</a><br>
+            <a href="http://www.imgur.com/" target="_blank">http://www.imgur.com/</a><br>
+            <a href="http://www.reddit.com/" target="_blank">http://www.reddit.com/</a><br>
+            <a href="http://bearfacts.berkeley.edu/" target="_blank">http://bearfacts.berkeley.edu/</a><br>
+            <a href="http://www.quora.com/" target="_blank">http://www.quora.com/</a><br>
+            <a href="http://www.github.com/" target="_blank">http://www.github.com/</a><br>
+            <a href="http://www.speedtest.net/" target="_blank">http://www.speedtest.net/</a><br>
+            <a href="http://en.wikipedia.com/" target="_blank">http://en.wikipedia.com/</a><br>
+            <a href="http://www.explosm.com/" target="_blank">http://www.explosm.com/</a><br><br>
+            <button type="button" href="/history.html">History</button><br>
+            <button type="button" href="/statistics.html">Statistics</button><br>
+            <button type="button" href="/settings.html">Settings</button><br>
         </div>
-        <!-- the following scripts will be executed once inside the popup.html, which is essentially only the popup; they are NOT background processes and should be used only to display the user interface when clicking on the button (search for menu libraries to properly implement chrome toolbox menu functionality) -->
-        <!-- <button type="button" onclick="createTab();"> History</button>  -->
     </body>
 </html>
