@@ -3,6 +3,9 @@
 William Wu  
 Kevin Huynh  
 Shiv Sundram  
+Miles Dismond  
+Andrew Truong  
+Kelvin Leong  
 
 
 
@@ -31,3 +34,15 @@ Shiv Sundram
     - instant replay, fast forward, slow down
     - looping (going forward, then going backward), gif creation
     - facial recognition and comparison with imdb
+
+
+## Analysis
+- parent/child tree, displayed as an actual tree
+    - show animation of depth-first search, breadth-first search, user-defined search
+    - each node has a parent reference and a child reference
+- graphs of frequency of site visits
+    - filter by domain, search term, time of access
+
+
+Cited Resources
+- https://www.iconfinder.com/search/?q=iconset:flat-ui-free-2 or http://iconfindr.com/1sONVsY
