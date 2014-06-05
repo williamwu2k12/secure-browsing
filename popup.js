@@ -2,44 +2,46 @@ function login(username, password)
 {
     if (username == "william" && password == "secret")
     {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("menu").style.display = "initial";
-        document.getElementById("links").style.display = "initial";
-        chrome.extension.getBackgroundPage().state = "logged in";
+        document.getElementById("section1").style.display = "none";
+        document.getElementById("section2").style.display = "initial";
+        document.getElementById("section3").style.display = "initial";
+        // var logout = document.createElement("button");
+        // button.id = "logout";
+        // document.getElementById("")
+        chrome.storage.local.set({state: "logged in"});
     }
 }
 
 function logout()
 {
-    document.getElementById("login").style.display = "initial";
-    document.getElementById("menu").style.display = "none";
-    document.getElementById("links").style.display = "none";
-    chrome.extension.getBackgroundPage().state = "logged out";
+    document.getElementById("section1").style.display = "initial";
+    document.getElementById("section2").style.display = "none";
+    document.getElementById("section3").style.display = "none";
+    chrome.storage.local.set({state: "logged out"});
 }
 
-function onSubmitted()
+var loginForm = document.getElementById("loginForm");
+var loginButton = document.getElementById("login");
+loginButton.onclick = function(event)
 {
-    document.getElementById("userinfo").addEventListener("submit", function(event)
-    {
-        event.preventDefault();
-        login(this.username.value, this.password.value);
-    });
+    login(loginForm.username.value, loginForm.password.value);
 }
 
-/**
-* @purpose: adds listener to find out when the submit button pressed
-**/
-window.addEventListener("load", onSubmitted, false);
+var logoutButton = document.getElementById("logout");
+logoutButton.onclick = function(event)
+{
+    logout();
+}
 
 /**
 * @purpose: removes the login items and displays the menu and links items if already logged in
 **/
-chrome.runtime.getBackgroundPage(function(backgroundPage)
+chrome.storage.local.get("state", function(object)
 {
-    if (backgroundPage.state == "logged in")
+    if (object["state"] == "logged in")
     {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("menu").style.display = "initial";
-        document.getElementById("links").style.display = "initial";
+        document.getElementById("section1").style.display = "none";
+        document.getElementById("section2").style.display = "initial";
+        document.getElementById("section3").style.display = "initial";
     }
 });
