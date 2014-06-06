@@ -12,7 +12,7 @@
                 padding: 0px;
                 border: 0px;
             }
-            #loginForm, #optionsTable, #linkHistory
+            #loginForm, #optionsTable, #linkTable
             {
                 font-size: 13px;
             }
@@ -63,7 +63,7 @@
                 padding-right: 16px;
                 border: 0px;
             }
-            #section3 #linkHistory
+            #section3 #linkTable
             {
                 padding-top: 0px;
                 padding-bottom: 8px;
@@ -138,7 +138,7 @@
         <div id="section2">
             <table id="optionsTable" width="100%">
                 <tr>
-                    <td align="center">
+<!--                     <td align="center">
                         <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="history" type="image" src="/resources/images/history.png" width="auto" height="50%"><br>History</a>
                     </td>
                     <td align="center">
@@ -147,14 +147,33 @@
                     <td align="center">
                         <a href="/settings.html/" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="settings" type="image" src="/resources/images/settings.png" width="auto" height="50%"><br>Settings</a>
                     </td>
+                    <td align="center">
+                        <button id="logout" type="button"><img src="/resources/images/settings.png" width="50%" height="50%"><br>Logout</button>
+                    </td> -->
+
+
+
+                    <td align="center">
+                        <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><button id="history" type="button"><img src="resources/images/history.png" width="50%" height="50%"><br>History</button></a>
+                    </td>
+                    <td align="center">
+                        <a href="/statistics.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><button id="statistics" type="button"><img src="resources/images/statistics.png" width="50%" height="50%"><br>Statistics</button></a>
+                    </td>
+                    <td align="center">
+                        <a href="/settings.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><button id="settings" type="button"><img src="resources/images/settings.png" width="50%" height="50%"><br>Settings</button></a>
+                    </td>
+                    <td align="center">
+                        <button id="logout" type="button"><img src="/resources/images/settings.png" width="50%" height="50%"><br>Logout</button>
+                    </td>
                 </tr>
             </table>
         </div>
 
         <div id="section3">
             <hr>
-            <h2 id="subtitle1">Recently Visited<button id="logout" type="button">Logout</button></h2>
-            <table id="linkHistory" width="100%" cellspacing="0">
+            <h2 id="subtitle1">Recently Visited</h2>
+            <div><button id="temp" type="button">TEMPPPP</button></div>
+            <table id="linkTable" width="100%" cellspacing="0">
                 <tr>
                     <td class="link"><a href="http://www.imgur.com/" target="_blank">http://www.imgur.com/</a></td>
                 </tr>
