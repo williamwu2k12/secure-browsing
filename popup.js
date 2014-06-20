@@ -1,105 +1,102 @@
-var users = {}; // all items in dictionary MUST be encrypted, good idea to look for other methods of password storing
+// var users = {}; // all items in dictionary MUST be encrypted, good idea to look for other methods of password storing
 
-/**********************
-**  Account Options  **
-**********************/
+// /**********************
+// **  Account Options  **
+// **********************/
 
-function user(name, master, key1, key2)
-{
-    if (master == key1 || master == key2 || key1 == key2) // making sure no two passwords are the same
-    {
-        console.log("Passwords can not be the same")
-        return;
-    }
-    this.name = name;
-    this.password = master;
-    this.key1 = key1;
-    this.key2 = key2;
-}
+// function user(name, master, key1, key2)
+// {
+//     if (master == key1 || master == key2 || key1 == key2) // making sure no two passwords are the same
+//     {
+//         console.log("Passwords can not be the same")
+//         return;
+//     }
+//     this.name = name;
+//     this.password = master;
+//     this.key1 = key1;
+//     this.key2 = key2;
+// }
 
-function createUser(name, master, key1, key2)
-{
-    var account = new user(name, master, key1, key2);
-    if (account != undefined)
-    {
-        users[name] = account;
-    }
-    else
-    {
-        console.log("Error creating account");
-    }
-}
+// function createUser(name, master, key1, key2)
+// {
+//     var account = new user(name, master, key1, key2);
+//     if (account != undefined)
+//     {
+//         users[name] = account;
+//     }
+//     else
+//     {
+//         console.log("Error creating account");
+//     }
+// }
 
-function changePassword(name, master, type, oldKey, newKey)
-{
-    var account = users[name];
-    if (account == undefined)
-    {
-        console.log("Invalid account name");
-        return;
-    }
-    if (master != account.password)
-    {
-        console.log("Invalid master password");
-        return;
-    }
-    if (type == "password")
-    {
-        account.password = newKey;
-    }
-    if (type == "key1" && account.key1 == oldKey)
-    {
-        account.key1 = newKey;
-    }
-    if (type == "key2" && account.key2 == oldKey)
-    {
-        account.key2 = newKey;
-    }
-}
+// function changePassword(name, master, type, oldKey, newKey)
+// {
+//     var account = users[name];
+//     if (account == undefined)
+//     {
+//         console.log("Invalid account name");
+//         return;
+//     }
+//     if (master != account.password)
+//     {
+//         console.log("Invalid master password");
+//         return;
+//     }
+//     if (type == "password")
+//     {
+//         account.password = newKey;
+//     }
+//     if (type == "key1" && account.key1 == oldKey)
+//     {
+//         account.key1 = newKey;
+//     }
+//     if (type == "key2" && account.key2 == oldKey)
+//     {
+//         account.key2 = newKey;
+//     }
+// }
 
-function deleteUser(name, master)
-{
-    if (users[name].password == master)
-    {
-        delete users[name];
-    }
-    else
-    {
-        console.log("Invalid master password");
-    }
-}
+// function deleteUser(name, master)
+// {
+//     if (users[name].password == master)
+//     {
+//         delete users[name];
+//     }
+//     else
+//     {
+//         console.log("Invalid master password");
+//     }
+// }
 
-/**
-* function login(name, password)
-* @purpose: displays the history according to the username and password
-* @param: name: the name of the user who wants to login
-* @param: password: the password of the user who wants to login
-* @note: should extend other options besides the basic three
-**/
-function login(name, password)
-{
-    if (password == users[name].password)
-    {
-        showHistory();
-    }
-    else if (password == users[name].key1)
-    {
-        showFakestory();
-    }
-    else if (password == users[name].key2)
-    {
-        chrome.storage.local.clear();
-    }
-    else
-    {
-        alert("Username and password combination incorrect. Please try again."); // we can also implement that if you try too many times, chrome.storage.local will automatically clear itself (good for preventing brute force attacks)
-    }
-}
+// /**
+// * function login(name, password)
+// * @purpose: displays the history according to the username and password
+// * @param: name: the name of the user who wants to login
+// * @param: password: the password of the user who wants to login
+// * @note: should extend other options besides the basic three
+// **/
+// function login(name, password)
+// {
+//     if (password == users[name].password)
+//     {
+//         showHistory();
+//     }
+//     else if (password == users[name].key1)
+//     {
+//         showFakestory();
+//     }
+//     else if (password == users[name].key2)
+//     {
+//         chrome.storage.local.clear();
+//     }
+//     else
+//     {
+//         alert("Username and password combination incorrect. Please try again."); // we can also implement that if you try too many times, chrome.storage.local will automatically clear itself (good for preventing brute force attacks)
+//     }
+// }
 
-createUser("william", "secret", "notsecret", "clear");
-
-
-
+// createUser("william", "secret", "notsecret", "clear");
 
 
 
@@ -118,7 +115,9 @@ function login(username, password)
         document.getElementById("section1").style.display = "none";
         document.getElementById("section2").style.display = "initial";
         document.getElementById("section3").style.display = "initial";
+        setRecents(10);
         chrome.storage.local.set({state: "logged in"});
+        chrome.storage.local.set({password: password});
     }
 }
 
@@ -132,7 +131,9 @@ function logout()
     document.getElementById("section1").style.display = "initial";
     document.getElementById("section2").style.display = "none";
     document.getElementById("section3").style.display = "none";
+    removeRecents();
     chrome.storage.local.set({state: "logged out"});
+    chrome.storage.local.remove("password");
 }
 
 /**
@@ -143,6 +144,8 @@ var loginButton = document.getElementById("login");
 loginButton.onclick = function(event)
 {
     login(loginForm.username.value, loginForm.password.value);
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
 }
 
 /**
@@ -159,11 +162,13 @@ logoutButton.onclick = function(event)
 **/
 chrome.storage.local.get("state", function(object)
 {
+    removeRecents();
     if (object["state"] == "logged in")
     {
         document.getElementById("section1").style.display = "none";
         document.getElementById("section2").style.display = "initial";
         document.getElementById("section3").style.display = "initial";
+        setRecents(10);
     }
 });
 
@@ -175,24 +180,43 @@ chrome.storage.local.get("state", function(object)
 **/
 function appendLink(link, title)
 {
-    var row = document.createElement("tr");
-    var cell = document.createElement("td");
+    var linkTable = document.getElementById("linkTable");
+    var row = linkTable.insertRow(linkTable.rows.length);
+    var cell = row.insertCell(0);
     var content = document.createElement("a");
     content.href = link;
     content.target = "_blank";
     content.appendChild(document.createTextNode(title));
     cell.className = "link";
     cell.appendChild(content);
-    row.appendChild(cell);
-    linkTable.getElementsByTagName("tbody")[0].appendChild(row);
 }
 
 /**
-* @purpose: temporary testing of appendLink
+* @purpose: adds number entries to recently visited links
 **/
-var tempButton = document.getElementById("temp");
-var linkTable = document.getElementById("linkTable");
-tempButton.onclick = function(event)
+function setRecents(number)
 {
-    appendLink("http://www.facebook.com", "http://www.facebook.com");
+    chrome.storage.local.get(null, function(objects)
+    {
+        var linkKeys = objects["keys"];
+        var i = linkKeys.length - 1;
+        while (number > 0 && i > 0)
+        {
+            appendLink(objects[linkKeys[i]], objects[linkKeys[i]]);
+            number--;
+            i--;
+        }
+    });
+}
+
+/**
+* @purpose: removes all entries in recently visited links
+**/
+function removeRecents()
+{
+    var linkTable = document.getElementById("linkTable");
+    while (linkTable.rows.length > 0)
+    {
+        linkTable.deleteRow(0);
+    }
 }

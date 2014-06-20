@@ -29,6 +29,13 @@
                 padding-bottom: 8px;
                 border: 0px;
             }
+            hr
+            {
+                border: none;
+                height: 1px;
+                color: #e0e0e0;
+                background-color: #e0e0e0;
+            }
             #section1
             {
                 display: initial;
@@ -45,8 +52,8 @@
             }
             #section2 #optionsTable
             {
-                padding-top: 8px;
-                padding-bottom: 8px;
+                padding: 8px;
+                width: 280px;
             }
             #section3
             {
@@ -67,6 +74,8 @@
             {
                 padding-top: 0px;
                 padding-bottom: 8px;
+                border-collapse: collapse;
+                table-layout: fixed;
             }
             #section3 td.link:hover
             {
@@ -129,7 +138,7 @@
                     </tr>
                     <tr>
                         <td align="left"></td>
-                        <td align="left"><button id="login" type="submit">Submit</button></td>
+                        <td align="left"><button id="login" type="button">Submit</button></td>
                     </tr>
                 </table>
             </form>
@@ -138,22 +147,22 @@
         <div id="section2">
             <table id="optionsTable" width="100%">
                 <tr>
-<!--                     <td align="center">
-                        <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="history" type="image" src="/resources/images/history.png" width="auto" height="50%"><br>History</a>
+                    <td align="center">
+                        <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="history" type="image" src="/resources/images/history.png" width="50%" height="auto"><br>History</a>
                     </td>
                     <td align="center">
-                        <a href="/statistics.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="statistics" type="image" src="/resources/images/statistics.png" width="auto" height="50%"><br>Statistics</a>
+                        <a href="/statistics.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="statistics" type="image" src="/resources/images/statistics.png" width="50%" height="auto"><br>Statistics</a>
                     </td>
                     <td align="center">
-                        <a href="/settings.html/" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="settings" type="image" src="/resources/images/settings.png" width="auto" height="50%"><br>Settings</a>
+                        <a href="/settings.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><input id="settings" type="image" src="/resources/images/settings.png" width="50%" height="auto"><br>Settings</a>
                     </td>
                     <td align="center">
-                        <button id="logout" type="button"><img src="/resources/images/settings.png" width="50%" height="50%"><br>Logout</button>
-                    </td> -->
+                        <input id="logout" type="image" src="/resources/images/settings.png" width="50%" height="auto"><br>Logout</button>
+                    </td>
 
 
 
-                    <td align="center">
+                    <!-- <td align="center">
                         <a href="/history.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><button id="history" type="button"><img src="resources/images/history.png" width="50%" height="50%"><br>History</button></a>
                     </td>
                     <td align="center">
@@ -163,7 +172,7 @@
                         <a href="/settings.html/" target="_blank" style="text-decoration: none; color: #000000; border: 0; outline: none;"><button id="settings" type="button"><img src="resources/images/settings.png" width="50%" height="50%"><br>Settings</button></a>
                     </td>
                     <td align="center">
-                        <button id="logout" type="button"><img src="/resources/images/settings.png" width="50%" height="50%"><br>Logout</button>
+                        <button id="logout" type="button"><img src="/resources/images/settings.png" width="50%" height="50%"><br>Logout</button> -->
                     </td>
                 </tr>
             </table>
@@ -172,9 +181,8 @@
         <div id="section3">
             <hr>
             <h2 id="subtitle1">Recently Visited</h2>
-            <div><button id="temp" type="button">TEMPPPP</button></div>
             <table id="linkTable" width="100%" cellspacing="0">
-                <tr>
+                <!-- <tr>
                     <td class="link"><a href="http://www.imgur.com/" target="_blank">http://www.imgur.com/</a></td>
                 </tr>
                 <tr>
@@ -197,10 +205,11 @@
                 </tr>
                 <tr>
                     <td class="link"><a href="http://www.explosm.com/" target="_blank">http://www.explosm.net/</a></td>
-                </tr>
+                </tr> -->
             </table>
         </div>
 
+        <script src="/resources/libraries/cryptojs/rollups/aes.js"></script>
         <script src="/popup.js"></script>
     </body>
 </html>
