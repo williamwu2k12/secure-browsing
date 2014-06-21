@@ -198,10 +198,11 @@ function setRecents(number)
     {
         var linkKeys = objects["keys"];
         var i = linkKeys.length - 1;
+        var object;
         while (number > 0 && i > -1)
         {
             // appendLink(objects[linkKeys[i]], objects[linkKeys[i]]);
-            var object = JSON.parse(CryptoJS.AES.decrypt(objects[linkKeys[i]], objects["password"]).toString(CryptoJS.enc.Utf8));
+            object = JSON.parse(CryptoJS.AES.decrypt(objects[linkKeys[i]], objects["password"]).toString(CryptoJS.enc.Utf8));
             appendLink(object["url"], object["url"]);
             number--;
             i--;

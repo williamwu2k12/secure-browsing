@@ -77,10 +77,6 @@
                 border-collapse: collapse;
                 table-layout: fixed;
             }
-            #section3 td
-            {
-                word-wrap: break-word;
-            }
             #section3 td.link:hover
             {
                 background: linear-gradient(to bottom, #4766ea 0%, #0d36e6 100%);
@@ -119,6 +115,9 @@
                 border: 0px;
                 outline: none;
                 color: #000000;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         </style>
         <title>Secure Browsing</title>
@@ -181,9 +180,10 @@
                 </tr>
             </table>
         </div>
+        
+        <hr>
 
         <div id="section3">
-            <hr>
             <h2 id="subtitle1">Recently Visited</h2>
             <table id="linkTable" width="100%" cellspacing="0">
                 
