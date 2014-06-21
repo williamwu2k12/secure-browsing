@@ -7,48 +7,38 @@
 * @purpose: stores the string value of JSON object in local storage
 * @param: key: string, either date of access, index, or url
 * @param: value: JSON dictionary, of type link
+* @param: password: the password to encrypt the data with
 **/
-function store(key, value)
+function store(key, value, password)
 {
-    var object = {};
-    object[encrypt(key)] = encrypt(JSON.stringify(value));
-    chrome.storage.local.set(object, function()
+    // var object = {};
+    // object[encrypt(key)] = encrypt(JSON.stringify(value));
+    // chrome.storage.local.set(object, function()
+    // {
+    //     // this should split the keys into more manageable arrays, considering average number of links is 1000 per day, and a month would be 30000
+    //     // change from convertDate().substring(2, 6) to convertDate().substring(2, 8) to split into days instead of months
+    //     var month = "keys" + convertDate().substring(2, 6);
+    //     chrome.storage.local.get(month, function(keys))
+    //     {
+    //         if (keys[month] == undefined)
+    //         {
+    //             keys[month] = [];
+    //         }
+    //         keys[month].push(encrypt(key));
+    //         chrome.storage.local.set(keys);
+    //     }
+    // });
+    var dict = {};
+    var dictkey = CryptoJS.AES.encrypt(key, password).toString();
+    var dictvalue = CryptoJS.AES.encrypt(JSON.stringify(value), password).toString();
+    dict[dictkey] = dictvalue;
+    chrome.storage.local.set(dict, function()
     {
-        // this should split the keys into more manageable arrays, considering average number of links is 1000 per day, and a month would be 30000
-        // change from convertDate().substring(2, 6) to convertDate().substring(2, 8) to split into days instead of months
-        // var month = "keys" + convertDate().substring(2, 6);
-        // chrome.storage.local.get(month, function(keys))
-        // {
-        //     if (keys[month] == undefined)
-        //     {
-        //         keys[month] = [];
-        //     }
-        //     keys[month].push(encrypt(key));
-        //     chrome.storage.local.set(keys);
-        // }
-
-        chrome.storage.local.get("keys", function(dict)
+        chrome.storage.local.get("keys", function(object)
         {
-            if (dict["keys"] == undefined)
-            {
-                dict["keys"] = [];
-            }
-            dict["keys"].push(encrypt(key));
-            chrome.storage.local.set(dict);
+            object["keys"].push(dictkey);
+            chrome.storage.local.set(object);
         });
-    });
-}
-
-/**
-* function get(key)
-* @purpose: retrieves the object, decrypts, reconverts to JSON, logs to console
-* @param: key: string, either date of access, index, or url
-**/
-function get(key)
-{
-    chrome.storage.local.get(key, function(object)
-    {
-        console.log(decrypt(object[decrypt(key)]));
     });
 }
 
@@ -87,42 +77,14 @@ function link(address, labels, incognito)
 **/
 function storeUrl(url, tags, state)
 {
-    chrome.storage.local.get(encrypt(url), function(object)
+    chrome.storage.local.get("password", function(object)
     {
-        var hyperlink = new link(url, tags, state);
-        store(convertDate(), hyperlink);
-        // console.log("Storing " + JSON.stringify(hyperlink) + " succeeded.");
-    })
-}
-
-/**
-* function encrypt(value)
-* @purpose: encrypts the JSON string so that people with access to file can't use it
-* @param: value: string to be encrypted
-**/
-function encrypt(value)
-{
-    var secret = "";
-    for (var letter = 0; letter < value.length; letter++)
-    {
-        secret += cipher[value.charAt(letter)];
-    }
-    return secret;
-}
-
-/**
-* function decrypt(value)
-* @purpose: decrypts a JSON string so that the right users can access it
-* @param: value: string to be decrypted
-**/
-function decrypt(value)
-{
-    var unsecret = "";
-    for (var letter = 0; letter < value.length; letter++)
-    {
-        unsecret += cipher.getKeyByValue(value.charAt(letter));
-    }
-    return unsecret;
+        if (object["password"] != "")
+        {
+            var hyperlink = new link(url, tags, state);
+            store(convertDate(), hyperlink, object["password"]);
+        }
+    });
 }
 
 
@@ -191,6 +153,7 @@ function convertDate()
         millisecond = "0" + millisecond;
     }
     return "" + today.getFullYear() + month + day + hour + minute + second + millisecond;
+    // today.getFullYear().toString().substring(2, 4);
 }
 
 
@@ -226,12 +189,20 @@ function printStorage()
         //         console.log(decrypt(key) + ": " + decrypt(allobjects[key]));
         //     }
         // }
-        var keys = Object.keys(objects);
-        keys.splice(keys.indexOf("keys"), 1);
+
+        // var keys = Object.keys(objects);
+        // keys.splice(keys.indexOf("keys"), 1);
+        // for (var i = 0; i < keys.length; i++)
+        // {
+        //     console.log(decrypt(keys[i]) + " : " + decrypt(objects[keys[i]]));
+        // }
+        // console.log(objects["keys"]);
+        var keys = objects["keys"];
+        var object;
         for (var i = 0; i < keys.length; i++)
         {
-            console.log(decrypt(keys[i]) + " : " + decrypt(objects[keys[i]]));
+            object = CryptoJS.AES.decrypt(objects[keys[i]], objects["password"]);
+            console.log(object.toString(CryptoJS.enc.Utf8));
         }
-        console.log(objects["keys"]);
     });
 };

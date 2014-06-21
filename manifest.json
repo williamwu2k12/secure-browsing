@@ -8,12 +8,12 @@
   "browser_action":
   {
     "default_icon": "/resources/images/icon.png",
-    "default_popup": "popup.html"
+    "default_popup": "/popup.html"
   },
 
   "background":
   {
-    "scripts": ["storage.js", "background.js"],
+    "scripts": ["/resources/libraries/cryptojs/rollups/aes.js", "/storage.js", "/background.js"],
     "persistent": false
   },
 

@@ -116,7 +116,6 @@ function login(username, password)
         document.getElementById("section2").style.display = "initial";
         document.getElementById("section3").style.display = "initial";
         setRecents(10);
-        chrome.storage.local.set({state: "logged in"});
         chrome.storage.local.set({password: password});
     }
 }
@@ -132,8 +131,7 @@ function logout()
     document.getElementById("section2").style.display = "none";
     document.getElementById("section3").style.display = "none";
     removeRecents();
-    chrome.storage.local.set({state: "logged out"});
-    chrome.storage.local.remove("password");
+    chrome.storage.local.set({password: ""});
 }
 
 /**
@@ -160,10 +158,10 @@ logoutButton.onclick = function(event)
 /**
 * @purpose: removes the login items and displays the menu and links items if already logged in
 **/
-chrome.storage.local.get("state", function(object)
+chrome.storage.local.get("password", function(object)
 {
     removeRecents();
-    if (object["state"] == "logged in")
+    if (object["password"] != "")
     {
         document.getElementById("section1").style.display = "none";
         document.getElementById("section2").style.display = "initial";
@@ -200,9 +198,11 @@ function setRecents(number)
     {
         var linkKeys = objects["keys"];
         var i = linkKeys.length - 1;
-        while (number > 0 && i > 0)
+        while (number > 0 && i > -1)
         {
-            appendLink(objects[linkKeys[i]], objects[linkKeys[i]]);
+            // appendLink(objects[linkKeys[i]], objects[linkKeys[i]]);
+            var object = JSON.parse(CryptoJS.AES.decrypt(objects[linkKeys[i]], objects["password"]).toString(CryptoJS.enc.Utf8));
+            appendLink(object["url"], object["url"]);
             number--;
             i--;
         }

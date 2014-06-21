@@ -5,11 +5,8 @@
 /**
 * @purpose: establish fixed references
 * @param: StorageArea: access to chrome local storage in 00003.log
-* @param: cipher: precomputed substitution cipher (later replaced by RSA)
 * @param: tabsets: dictionary of previous links, to check whether link has changed, also acts as tabset
 **/
-var StorageArea = chrome.storage.local;
-var cipher = { '0': 't', '1': 'S', '2': ' ', '3': 'm', '4': '9', '5': 'L', '6': 'h', '7': 'q', '8': 'B', '9': '4', u: 'd', d: 'u', '<': 'W', W: '<', m: '3', '$': '(', '(': '$', ' ': '2', B: '8', Q: '#', '#': 'Q', '[': ',', ',': '[', N: '\'', '\'': 'N', v: 'O', O: 'v', s: '?', '?': 's', ')': '`', '`': ')', '>': '}', '}': '>', q: '7', E: 'Z', Z: 'E', H: 'V', V: 'H', '.': '|', '|': '.', S: '1', D: 'y', y: 'D', n: '^', '^': 'n', '&': ':', ':': '&', J: '_', _: 'J', K: 'b', b: 'K', c: 'g', g: 'c', X: 'f', f: 'X', T: '-', '-': 'T', h: '6', r: '/', '/': 'r', '*': 'k', k: '*', M: '%', '%': 'M', I: 'i', i: 'I', '+': 'p', p: '+', R: ';', ';': 'R', j: 'l', l: 'j', U: 'w', w: 'U', '~': 'z', z: '~', t: '0', L: '5', ']': '=', '=': ']', '{': 'F', F: '{', e: 'P', P: 'e', '"': 'a', a: '"', o: 'x', x: 'o', '@': 'Y', Y: '@', '\\': 'G', G: '\\', C: '', '': 'C', '!': 'A', A: '!' };
 var tabsets = {};
 
 
@@ -35,7 +32,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
     {
         tabsets[tab.windowId][tabId] = [];
     }
-    if (changeInfo.url != undefined)
+    if (changeInfo.url != undefined && changeInfo.url.substring(0, 6) != "chrome")
     {
         tabsets[tab.windowId][tabId].push(changeInfo.url);
         storeUrl(changeInfo.url, null, tab.incognito);
@@ -138,3 +135,27 @@ function checkWindowTab(windowId, tabId)
         tabsets[windowId][tabId] = [];
     }
 }
+
+
+
+
+function initialize()
+{
+    chrome.storage.local.get("password", function(object)
+    {
+        if (object["password"] == undefined)
+        {
+            chrome.storage.local.set({password: ""});
+        }
+    });
+    chrome.storage.local.get("keys", function(object)
+    {
+        if (object["keys"] == undefined)
+        {
+            object["keys"] = [];
+            chrome.storage.local.set(object);
+        }
+    });
+}
+
+initialize();
