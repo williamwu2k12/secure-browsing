@@ -48,6 +48,7 @@ Current Tasks
 ** remove from list and commit with details when you complete a task below **
 
 - WE NEED TO TALK ABOUT HOW OUR DATA STRUCTURE IS GOING TO WORK BECAUSE WE HAVEN'T ESTABLISHED AN EFFECTIVE INTERFACE YET
+- figure out what the key should be; either a hash (so there's no going back, but access to specific instance will be easy) or an encryption with the password (though with salt and iv, there's no way to avoid getting different outputs every time, so no accessibility)
 - implement remove a link from the history data structure
 - optimize memory efficiency in json storage of link data
 - optimize the storage in dictionary such that storing is efficient (split on each week or month)

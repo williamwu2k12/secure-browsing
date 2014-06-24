@@ -13,7 +13,7 @@
 
   "background":
   {
-    "scripts": ["/resources/libraries/cryptojs/rollups/aes.js", "/storage.js", "/background.js"],
+    "scripts": ["/resources/libraries/cryptojs/rollups/aes.js", "resources/libraries/cryptojs/rollups/sha256.js", "/storage.js", "/background.js"],
     "persistent": false
   },
 
@@ -26,6 +26,5 @@
     "<all_urls>"
   ],
 
-  "web_accessible_resources": ["storage.js", "history.js"],
   "incognito": "split"
 }

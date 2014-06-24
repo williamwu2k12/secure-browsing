@@ -45,21 +45,47 @@ function showHistory()
 {
     chrome.storage.local.get(null, function(objects)
     {
-        clearBody();
-        var linkKeys = objects["keys"];
-        for (var i = linkKeys.length - 1; i > -1 && i > linkKeys.length - 1 - 100 - (page * 100); i--)
+        clearBody()
+        var number = 100;
+        var listkeys = objects["keys"];
+        var i = listkeys.length - 1;
+        var j;
+        var value;
+        var keys;
+        while (number > 0 && i > -1)
         {
-            var key = CryptoJS.AES.decrypt(linkKeys[i], objects["password"]).toString(CryptoJS.enc.Utf8);
-            var object = CryptoJS.AES.decrypt(objects[linkKeys[i]], objects["password"]).toString(CryptoJS.enc.Utf8);
-            addElement(key, object);
-            // addElement(decrypt(linkKeys[i]), decrypt(objects[linkKeys[i]]));
+            keys = objects[listkeys[i]];
+            j = keys.length - 1;
+            while (number > 0 && j > -1)
+            {
+                value = CryptoJS.AES.decrypt(objects[keys[j]], objects["password"]).toString(CryptoJS.enc.Utf8);
+                addElement(CryptoJS.AES.decrypt(keys[j], objects["password"]).toString(CryptoJS.enc.Utf8), value);
+                number--;
+                j--;
+            }
+            i--;
         }
         page++;
-        if (linkKeys[linkKeys.length - 1 - page * 100] != undefined)
-        {
-            showMore();
-        }
-    })
+        showMore();
+    });
+
+    // chrome.storage.local.get(null, function(objects)
+    // {
+    //     clearBody();
+    //     var linkKeys = objects["keys"];
+    //     for (var i = linkKeys.length - 1; i > -1 && i > linkKeys.length - 1 - 100 - (page * 100); i--)
+    //     {
+    //         var key = CryptoJS.AES.decrypt(linkKeys[i], objects["password"]).toString(CryptoJS.enc.Utf8);
+    //         var object = CryptoJS.AES.decrypt(objects[linkKeys[i]], objects["password"]).toString(CryptoJS.enc.Utf8);
+    //         addElement(key, object);
+    //         // addElement(decrypt(linkKeys[i]), decrypt(objects[linkKeys[i]]));
+    //     }
+    //     page++;
+    //     if (linkKeys[linkKeys.length - 1 - page * 100] != undefined)
+    //     {
+    //         showMore();
+    //     }
+    // });
 }
 
 /**
@@ -158,7 +184,7 @@ function addElement(key, object)
 {
     var newLink = document.createElement("div");
     var theLink = JSON.parse(object);
-    newLink.innerHTML = key.substring(0, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 14) + ":" + key.substring(14, 17) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
+    newLink.innerHTML = key.substring(0, 2) + ":" + key.substring(2, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 15) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
     newLink.className = "links";
     document.body.appendChild(newLink);
 }

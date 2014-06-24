@@ -35,7 +35,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
     if (changeInfo.url != undefined && changeInfo.url.substring(0, 6) != "chrome")
     {
         tabsets[tab.windowId][tabId].push(changeInfo.url);
-        storeUrl(changeInfo.url, null, tab.incognito);
+        storeUrl(tab.title, changeInfo.url, null, tab.incognito);
     }
 })
 /**
@@ -141,6 +141,13 @@ function checkWindowTab(windowId, tabId)
 
 function initialize()
 {
+    chrome.storage.local.get("username", function(object)
+    {
+        if (object["username"] == undefined)
+        {
+            chrome.storage.local.set({username: ""});
+        }
+    });
     chrome.storage.local.get("password", function(object)
     {
         if (object["password"] == undefined)
@@ -153,6 +160,14 @@ function initialize()
         if (object["keys"] == undefined)
         {
             object["keys"] = [];
+            chrome.storage.local.set(object);
+        }
+    });
+    chrome.storage.local.get("accounts", function(object)
+    {
+        if (object["accounts"] == undefined)
+        {
+            object["accounts"] = {};
             chrome.storage.local.set(object);
         }
     });

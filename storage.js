@@ -11,32 +11,26 @@
 **/
 function store(key, value, password)
 {
-    // var object = {};
-    // object[encrypt(key)] = encrypt(JSON.stringify(value));
-    // chrome.storage.local.set(object, function()
-    // {
-    //     // this should split the keys into more manageable arrays, considering average number of links is 1000 per day, and a month would be 30000
-    //     // change from convertDate().substring(2, 6) to convertDate().substring(2, 8) to split into days instead of months
-    //     var month = "keys" + convertDate().substring(2, 6);
-    //     chrome.storage.local.get(month, function(keys))
-    //     {
-    //         if (keys[month] == undefined)
-    //         {
-    //             keys[month] = [];
-    //         }
-    //         keys[month].push(encrypt(key));
-    //         chrome.storage.local.set(keys);
-    //     }
-    // });
+    // this should split the keys into more manageable arrays, considering average number of links is 1000 per day, and a month would be 30000
+    var date = "keys" + key.substring(0, 6);
     var dict = {};
-    var dictkey = CryptoJS.AES.encrypt(key, password).toString();
-    var dictvalue = CryptoJS.AES.encrypt(JSON.stringify(value), password).toString();
-    dict[dictkey] = dictvalue;
+    key = CryptoJS.AES.encrypt(key, password).toString();
+    value = CryptoJS.AES.encrypt(JSON.stringify(value), password).toString();
+    dict[key] = value;
     chrome.storage.local.set(dict, function()
     {
-        chrome.storage.local.get("keys", function(object)
+        chrome.storage.local.get(date, function(object)
         {
-            object["keys"].push(dictkey);
+            if (object[date] == undefined)
+            {
+                object[date] = [];
+                chrome.storage.local.get("keys", function(obj)
+                {
+                    obj["keys"].push(date);
+                    chrome.storage.local.set(obj);
+                });
+            }
+            object[date].push(key);
             chrome.storage.local.set(object);
         });
     });
@@ -45,14 +39,18 @@ function store(key, value, password)
 /**
 * function link(address)
 * @purpose: constructor creating the main history object
+* @param: name: the title of the page, should be document.title but currently tab.title
 * @param: address: the url accessed
+* @param: labels: user defined labels for the link
+* @param: incognito: a boolean indicating whether link was accessed in incognito
 * @note: needs to be updated with more fields later, structure possibly changed
 * @note: what information about the link and the visit is important
 * @note: consider keylogging, have it be user turned on or off
 * @note: problem with getting document.title using tab.title, gives incorrect title, may need to use message passing
 **/
-function link(address, labels, incognito)
+function link(name, address, labels, incognito)
 {
+    this.title = name;
     this.url = address;
     this.tags = labels; // should be list of strings, first item in tags should always be the title string (document.title)
     this.state = incognito;
@@ -70,18 +68,18 @@ function link(address, labels, incognito)
 
 /**
 * function storeUrl(url)
-* @purpose: stores the url, access data, and other information of the visit
+* @purpose: checks conditions of environment before storing the url, access data, and other information of the visit
 * @param: url: the url to be stored
 * @note: url should be interchangeable with location.href
 * @note: make sure that on window close, links closed simultaneously do not overwrite each other
 **/
-function storeUrl(url, tags, state)
+function storeUrl(title, url, tags, state)
 {
     chrome.storage.local.get("password", function(object)
     {
         if (object["password"] != "")
         {
-            var hyperlink = new link(url, tags, state);
+            var hyperlink = new link(title, url, tags, state);
             store(convertDate(), hyperlink, object["password"]);
         }
     });
@@ -152,8 +150,7 @@ function convertDate()
         }
         millisecond = "0" + millisecond;
     }
-    return "" + today.getFullYear() + month + day + hour + minute + second + millisecond;
-    // today.getFullYear().toString().substring(2, 4);
+    return "" + today.getFullYear().toString().substring(2, 4) + month + day + hour + minute + second + millisecond;
 }
 
 
@@ -172,6 +169,18 @@ function clearStorage()
 }
 
 /**
+* function readStorage();
+* @purpose: prints everything in storage
+**/
+function readStorage()
+{
+    chrome.storage.local.get(null, function(objects)
+    {
+        console.log(objects);
+    });
+}
+
+/**
 * function printStorage()
 * @purpose: prints the current state of the storage, decrypted
 **/
@@ -179,30 +188,15 @@ function printStorage()
 {
     chrome.storage.local.get(null, function(objects)
     {
-        // var allkeys = Object.keys(objects);
-        // var allobjects = objects;
-        // // console.log(allobjects);
-        // for (var key in allobjects)
-        // {
-        //     if (allobjects.hasOwnProperty(key))
-        //     {
-        //         console.log(decrypt(key) + ": " + decrypt(allobjects[key]));
-        //     }
-        // }
-
-        // var keys = Object.keys(objects);
-        // keys.splice(keys.indexOf("keys"), 1);
-        // for (var i = 0; i < keys.length; i++)
-        // {
-        //     console.log(decrypt(keys[i]) + " : " + decrypt(objects[keys[i]]));
-        // }
-        // console.log(objects["keys"]);
         var keys = objects["keys"];
+        var password = objects["password"];
+        var key;
         var object;
         for (var i = 0; i < keys.length; i++)
         {
-            object = CryptoJS.AES.decrypt(objects[keys[i]], objects["password"]);
-            console.log(object.toString(CryptoJS.enc.Utf8));
+            key = CryptoJS.AES.decrypt(keys[i], password);
+            object = CryptoJS.AES.decrypt(objects[keys[i]], password);
+            console.log(key.toString(CryptoJS.enc.Utf8) + ":" + object.toString(CryptoJS.enc.Utf8));
         }
     });
 };
