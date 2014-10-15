@@ -1,15 +1,13 @@
 # Secure Browsing
 
 William Wu  
-Kevin Huynh  
-Shiv Sundram  
-Miles Dismond  
-Andrew Truong  
-Kelvin Leong  
+Luis Vasquez
 
 
+## Planned Features
 
-## Security
+
+### Security
 - multiple layers of security and different encryptions for databases
 - password protection with different commands for each key
     - delete all caches, browsing history, bookmarks, favorites
@@ -18,7 +16,7 @@ Kelvin Leong
 - pregenerated key file required with the actual password
 
 
-## Browsing
+### Browsing
 - general browsing
     - saved tabsets as major points on a timeline, since most successful searches end with a close
     - link filters, blacklists and whitelists, to avoid seeing previously viewed links
@@ -36,7 +34,7 @@ Kelvin Leong
     - facial recognition and comparison with imdb
 
 
-## Analysis
+### Analysis
 - parent/child tree, displayed as an actual tree
     - show animation of depth-first search, breadth-first search, user-defined search
     - each node has a parent reference and a child reference

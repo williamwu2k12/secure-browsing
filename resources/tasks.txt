@@ -80,3 +80,12 @@ Data Structure for Link Storage
     - assume 100 characters each string, 50 characters for url, 50 characters for date and other information
     - 365 days per year, so 365 * 1000 * 100 * 1 == 36500000 == 36.5 * 10^6 == 36.5 megabytes
         - reasonable size for one year
+
+
+
+Ideas
+- put account name or account id at beginning of each timestamp
+    - this solves the problem of predictable sha256 inputs, thus giving free access to dates
+    - [md5 of account name string] + "|" + [time stamp]
+    - think of other data you could include in this, since it's extra memory
+- allow multiple passwords to access the accounts
