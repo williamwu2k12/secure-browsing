@@ -188,15 +188,20 @@ function printStorage()
 {
     chrome.storage.local.get(null, function(objects)
     {
-        var keys = objects["keys"];
+        var listkeys = objects["keys"];
         var password = objects["password"];
+        var keys;
         var key;
         var object;
-        for (var i = 0; i < keys.length; i++)
+        for (var j = listkeys.length - 1; j > -1; j--)
         {
-            key = CryptoJS.AES.decrypt(keys[i], password);
-            object = CryptoJS.AES.decrypt(objects[keys[i]], password);
-            console.log(key.toString(CryptoJS.enc.Utf8) + ":" + object.toString(CryptoJS.enc.Utf8));
+            keys = objects[objects["keys"][j]];
+            for (var i = 0; i < keys.length; i++)
+            {
+                key = CryptoJS.AES.decrypt(keys[i], password);
+                object = CryptoJS.AES.decrypt(objects[keys[i]], password);
+                console.log(key.toString(CryptoJS.enc.Utf8) + ":" + object.toString(CryptoJS.enc.Utf8));
+            }
         }
     });
-};
+}
