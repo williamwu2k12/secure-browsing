@@ -141,6 +141,41 @@ function clearBody()
 }
 
 /**
+* function fillHistory()
+* @purpose: fills the table on the site with recent websites with site and select headers
+* @note: IP only fills one row
+**/
+function fillHistory()
+{
+
+    var entry = document.getElementById("websites")
+    
+    var row = document.createElement("TR") //rows consist of a site and select elements
+
+    var input = document.createElement("input")
+    input.setAttribute("id", "newCheck")
+    input.setAttribute("type", "checkbox")
+
+    // var label = document.createElement("LABEL")
+    // label.setAttribute("for", "newCheck")
+    // var labelNum = document.createTextNode("1")
+    // label.appendChild(labelNum)
+    
+    var site = document.createElement("TD")
+    var siteName = document.createTextNode("11:18 PM HTML div align Attribute www.w3schools.com")
+    site.appendChild(siteName)
+
+    var select = document.createElement("TD")
+    // select.appendChild(label)
+    select.appendChild(input)
+
+    row.appendChild(site) //rows consist of a site element
+    row.appendChild(select) //and a select element
+    entry.appendChild(row)
+}
+
+
+/**
 * function initialize()
 * @purpose: initializes the view with either the history, fake history, or nothing (depending on password previously entered)
 * @note: to be finished, temporarily not implementing the cases because storage is unsecure
@@ -149,7 +184,8 @@ function initialize()
 {
     if (true)
     {
-        showHistory();
+        // showHistory();
+        fillHistory();
     }
     else if (1)
     {
