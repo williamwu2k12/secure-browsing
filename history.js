@@ -147,31 +147,50 @@ function clearBody()
 **/
 function fillHistory()
 {
+    chrome.storage.local.get(null, function(objects)
+    {
+        clearBody()
+        var number = 100;
+        var listkeys = objects["keys"];
+        var i = listkeys.length - 1;
+        var j;
+        var value;
+        var keys;
+        while (number > 0 && i > -1)
+        {
+            keys = objects[listkeys[i]];
+            j = keys.length - 1;
+            while (number > 0 && j > -1)
+            {
+                value = CryptoJS.AES.decrypt(objects[keys[j]], objects["password"]).toString(CryptoJS.enc.Utf8);
+                addElement(CryptoJS.AES.decrypt(keys[j], objects["password"]).toString(CryptoJS.enc.Utf8), value);
+                number--;
+                j--;
+            }
+            i--;
+        }
+        page++;
+        showMore();
+    });
 
-    var entry = document.getElementById("websites")
+    // var entry = document.getElementById("websites")
     
-    var row = document.createElement("TR") //rows consist of a site and select elements
+    // var row = document.createElement("TR") //rows consist of a site and select elements
 
-    var input = document.createElement("input")
-    input.setAttribute("id", "newCheck")
-    input.setAttribute("type", "checkbox")
-
-    // var label = document.createElement("LABEL")
-    // label.setAttribute("for", "newCheck")
-    // var labelNum = document.createTextNode("1")
-    // label.appendChild(labelNum)
+    // var input = document.createElement("input")
+    // input.setAttribute("id", "newCheck")
+    // input.setAttribute("type", "checkbox")
     
-    var site = document.createElement("TD")
-    var siteName = document.createTextNode("11:18 PM HTML div align Attribute www.w3schools.com")
-    site.appendChild(siteName)
+    // var site = document.createElement("TD")
+    // var siteName = document.createTextNode("11:18 PM HTML div align Attribute www.w3schools.com")
+    // site.appendChild(siteName)
 
-    var select = document.createElement("TD")
-    // select.appendChild(label)
-    select.appendChild(input)
+    // var select = document.createElement("TD")
+    // select.appendChild(input)
 
-    row.appendChild(site) //rows consist of a site element
-    row.appendChild(select) //and a select element
-    entry.appendChild(row)
+    // row.appendChild(site) //rows consist of a site element
+    // row.appendChild(select) //and a select element
+    // entry.appendChild(row)
 }
 
 
@@ -218,11 +237,34 @@ function initialize()
 **/
 function addElement(key, object)
 {
-    var newLink = document.createElement("div");
-    var theLink = JSON.parse(object);
-    newLink.innerHTML = key.substring(0, 2) + ":" + key.substring(2, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 15) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
-    newLink.className = "links";
-    document.body.appendChild(newLink);
+    var entry = document.getElementById("websites")
+    
+    var row = document.createElement("TR") //rows consist of a site and select elements
+
+    var input = document.createElement("input")
+    input.setAttribute("id", "newCheck")
+    input.setAttribute("type", "checkbox")
+    
+    var site = document.createElement("TD")
+    var theLink = JSON.parse(object); //getting link
+
+    var linkHTML = key.substring(0, 2) + ":" + key.substring(2, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 15) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
+
+    var siteName = document.createTextNode(linkHTML) //theLink
+    site.appendChild(siteName)
+
+    var select = document.createElement("TD")
+    select.appendChild(input)
+
+    row.appendChild(site) //rows consist of a site element
+    row.appendChild(select) //and a select element
+    entry.appendChild(row)
+
+    // var newLink = document.createElement("div");
+    // var theLink = JSON.parse(object);
+    // newLink.innerHTML = key.substring(0, 2) + ":" + key.substring(2, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 15) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
+    // newLink.className = "links";
+    // document.body.appendChild(newLink);
 }
 
 initialize();
