@@ -238,25 +238,35 @@ function initialize()
 **/
 function addElement(key, object)
 {
-    var entry = document.getElementById("websites")
+    var entry = document.getElementById("websites");
     
-    var row = document.createElement("TR") //rows consist of a site and select elements
+    var row = document.createElement("TR"); //rows consist of a site and select elements
 
-    var input = document.createElement("input")
-    input.setAttribute("id", "newCheck")
-    input.setAttribute("type", "checkbox")
+    var input = document.createElement("input");
+    input.setAttribute("id", "newCheck");
+    input.setAttribute("type", "checkbox");
     
-    var site = document.createElement("TD")
+    var site = document.createElement("TD");
     var theLink = JSON.parse(object); //getting link
 
     var linkHTML = key.substring(0, 2) + ":" + key.substring(2, 4) + ":" + key.substring(4, 6) + ":" + key.substring(6, 8) + ":" + key.substring(8, 10) + ":" + key.substring(10, 12) + ":" + key.substring(12, 15) + " : " + theLink["url"] + " : " + theLink["tags"] + " : " + theLink["state"];
 
-    var siteName = document.createTextNode(linkHTML) //theLink
-    site.appendChild(siteName)
-    site.style.textAlign="left";
+    var siteName = document.createTextNode(linkHTML); //theLink
 
-    var select = document.createElement("TD")
-    select.appendChild(input)
+    site.appendChild(siteName);
+    // site.style.textAlign="left";
+
+    var select = document.createElement("TD");
+    select.appendChild(input);
+
+    // site.colSpan = 9;
+    // select.colSpan = 1;
+
+    // var style = document.createElement("STYLE");
+    // var width = document.createTextNode("max-width:10px");
+    // style.appendChild(width);
+
+    // site.appendChild(style)
 
     row.appendChild(site) //rows consist of a site element
     row.appendChild(select) //and a select element
