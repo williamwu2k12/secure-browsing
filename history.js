@@ -8,10 +8,10 @@ var page = 0;
 
 function showMore()
 {
-    var button = document.createElement("input");
-    button.type = "button";
-    button.value = "Show More";
-    button.className = "links";
+    var button = document.createElement("A");
+    button.className = "button round tiny center";
+    var buttonText = document.createTextNode("Show More");
+    button.appendChild(buttonText);
     button.onclick = function()
     {
         button.parentNode.removeChild(button);
@@ -32,7 +32,8 @@ function showMore()
             }
         });
     }
-    document.body.appendChild(button);
+    var entry = document.getElementById("websites")
+    entry.appendChild(button);
 }
 
 /**
@@ -252,6 +253,7 @@ function addElement(key, object)
 
     var siteName = document.createTextNode(linkHTML) //theLink
     site.appendChild(siteName)
+    site.style.textAlign="left";
 
     var select = document.createElement("TD")
     select.appendChild(input)
