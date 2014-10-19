@@ -2,29 +2,35 @@
 **  Account Options  **
 **********************/
 
-function user(name, master, key1, key2)
-{
-    if (master == key1 || master == key2 || key1 == key2) // making sure no two passwords are the same
-    {
-        console.log("Passwords can not be the same")
-        return;
-    }
-    this.name = name;
-    this.password = master;
-    this.key1 = key1;
-    this.key2 = key2;
-}
+// function user(name, master, key1, key2)
+// {
+//     if (master == key1 || master == key2 || key1 == key2) // making sure no two passwords are the same
+//     {
+//         console.log("Passwords can not be the same")
+//         return;
+//     }
+//     this.name = name;
+//     this.password = master;
+//     this.key1 = key1;
+//     this.key2 = key2;
+// }
 
 function createUser(name, master, key1, key2)
 {
-    var account = new user(name, master, key1, key2);
-    if (account != undefined)
+    if (!(master == key1 || master == key2 || key1 == key2))
     {
         chrome.storage.local.get("accounts", function(object)
         {
             var accounts = object["accounts"];
-            var username = CryptoJS.SHA256(name);
-            var details = CryptoJS.AES.encrypt(JSON.stringify(account), master).toString();
+            // var username = CryptoJS.SHA256(name);
+            var username = name;
+            // var details = CryptoJS.AES.encrypt(JSON.stringify(account), master).toString();
+            details =
+            {
+                password: CryptoJS.SHA256(master).toString(),
+                key1: CryptoJS.SHA256(key1).toString(),
+                key2: CryptoJS.SHA256(key2).toString()
+            };
             if (accounts[username] == undefined)
             {
                 accounts[username] = details;
@@ -38,7 +44,7 @@ function createUser(name, master, key1, key2)
     }
     else
     {
-        console.log("Error creating account");
+        console.log("Passwords can not be the same");
     }
 }
 
@@ -131,7 +137,7 @@ function deleteUser(name, master)
 //     }
 // }
 
-createUser("william", "secret", "notsecret", "clear");
+// createUser("william", "secret", "notsecret", "clear");
 
 
 
@@ -147,25 +153,29 @@ createUser("william", "secret", "notsecret", "clear");
 **/
 function login(username, password)
 {
-    if (true)
+    chrome.storage.local.get("accounts", function(thing)
     {
-        chrome.storage.local.set({username: username});
-        chrome.storage.local.set({password: password});
-        chrome.storage.local.get("keys" + username, function(object)
+        account = thing["accounts"][username];
+        if (account["password"] == CryptoJS.SHA256(password).toString())
         {
-            if (object["keys" + username] == undefined)
+            chrome.storage.local.set({username: username});
+            chrome.storage.local.set({password: password});
+            chrome.storage.local.get("keys" + username, function(object)
             {
-                dict = {}
-                dict["keys" + username] = []
-                chrome.storage.local.set(dict)
-            }
-        });
-        document.getElementById("section1").style.display = "none";
-        document.getElementById("section2").style.display = "initial";
-        document.getElementById("section3").style.display = "initial";
-        setRecents(10);
-        // setRecents(10, new Date());
-    }
+                if (object["keys" + username] == undefined)
+                {
+                    dict = {}
+                    dict["keys" + username] = []
+                    chrome.storage.local.set(dict)
+                }
+            });
+            document.getElementById("section1").style.display = "none";
+            document.getElementById("section2").style.display = "initial";
+            document.getElementById("section3").style.display = "initial";
+            setRecents(10);
+            // setRecents(10, new Date());
+        }
+    });
 }
 
 /**
@@ -191,6 +201,13 @@ var loginButton = document.getElementById("login");
 loginButton.onclick = function(event)
 {
     login(loginForm.username.value, loginForm.password.value);
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+}
+var createButton = document.getElementById("create");
+createButton.onclick = function(event)
+{
+    createUser(loginForm.username.value, loginForm.password.value, "key1", "key2");
     document.getElementById("username").value = "";
     document.getElementById("password").value = "";
 }
