@@ -155,14 +155,14 @@ function initialize()
             chrome.storage.local.set({password: ""});
         }
     });
-    chrome.storage.local.get("keys", function(object)
-    {
-        if (object["keys"] == undefined)
-        {
-            object["keys"] = [];
-            chrome.storage.local.set(object);
-        }
-    });
+    // chrome.storage.local.get("keys", function(object)
+    // {
+    //     if (object["keys"] == undefined)
+    //     {
+    //         object["keys"] = [];
+    //         chrome.storage.local.set(object);
+    //     }
+    // });
     chrome.storage.local.get("accounts", function(object)
     {
         if (object["accounts"] == undefined)

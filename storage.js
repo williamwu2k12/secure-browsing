@@ -9,14 +9,18 @@
 * @param: value: JSON dictionary, of type link
 * @param: password: the password to encrypt the data with
 **/
-function store(key, value, password)
+function store(key, value, username, password)
 {
     // this should split the keys into more manageable arrays, considering average number of links is 1000 per day, and a month would be 30000
-    var date = "keys" + key.substring(0, 6);
-    var dict = {};
+    var date = "keys" + key.substring(0, 6) + username;
+    var userkeys = "keys" + username;
+
     key = CryptoJS.AES.encrypt(key, password).toString();
     value = CryptoJS.AES.encrypt(JSON.stringify(value), password).toString();
+
+    var dict = {};
     dict[key] = value;
+    
     chrome.storage.local.set(dict, function()
     {
         chrome.storage.local.get(date, function(object)
@@ -24,9 +28,9 @@ function store(key, value, password)
             if (object[date] == undefined)
             {
                 object[date] = [];
-                chrome.storage.local.get("keys", function(obj)
+                chrome.storage.local.get(userkeys, function(obj)
                 {
-                    obj["keys"].push(date);
+                    obj[userkeys].push(date);
                     chrome.storage.local.set(obj);
                 });
             }
@@ -77,11 +81,14 @@ function storeUrl(title, url, tags, state)
 {
     chrome.storage.local.get("password", function(object)
     {
-        if (object["password"] != "")
+        chrome.storage.local.get("username", function(thing)
         {
-            var hyperlink = new link(title, url, tags, state);
-            store(convertDate(), hyperlink, object["password"]);
-        }
+            if (object["password"] != "")
+            {
+                var hyperlink = new link(title, url, tags, state);
+                store(convertDate(), hyperlink, thing["username"], object["password"]);
+            }
+        });
     });
 }
 
@@ -188,14 +195,15 @@ function printStorage()
 {
     chrome.storage.local.get(null, function(objects)
     {
-        var listkeys = objects["keys"];
+        var userkeys = "keys" + objects["username"]
+        var listkeys = objects[userkeys];
         var password = objects["password"];
         var keys;
         var key;
         var object;
         for (var j = listkeys.length - 1; j > -1; j--)
         {
-            keys = objects[objects["keys"][j]];
+            keys = objects[objects[userkeys][j]];
             for (var i = 0; i < keys.length; i++)
             {
                 key = CryptoJS.AES.decrypt(keys[i], password);

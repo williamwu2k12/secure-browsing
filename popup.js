@@ -151,6 +151,15 @@ function login(username, password)
     {
         chrome.storage.local.set({username: username});
         chrome.storage.local.set({password: password});
+        chrome.storage.local.get("keys" + username, function(object)
+        {
+            if (object["keys" + username] == undefined)
+            {
+                dict = {}
+                dict["keys" + username] = []
+                chrome.storage.local.set(dict)
+            }
+        });
         document.getElementById("section1").style.display = "none";
         document.getElementById("section2").style.display = "initial";
         document.getElementById("section3").style.display = "initial";
@@ -263,7 +272,8 @@ function setRecents(number)
 {
     chrome.storage.local.get(null, function(objects)
     {
-        var listkeys = objects["keys"];
+        var userkeys = "keys" + objects["username"];
+        var listkeys = objects[userkeys];
         var i = listkeys.length - 1;
         var j;
         var value;
