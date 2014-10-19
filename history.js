@@ -152,7 +152,8 @@ function fillHistory()
     {
         clearBody()
         var number = 100;
-        var listkeys = objects["keys"];
+        var userkeys = "keys" + objects["username"];
+        var listkeys = objects[userkeys];
         var i = listkeys.length - 1;
         var j;
         var value;
