@@ -187,6 +187,42 @@ function readStorage()
     });
 }
 
+function displaySpecials()
+{
+    chrome.storage.local.get("username", function(object)
+    {
+        console.log("Username: " + object["username"]);
+    });
+    chrome.storage.local.get("password", function(object)
+    {
+        console.log("Password: " + object["password"]);
+    });
+    chrome.storage.local.get("accounts", function(object)
+    {
+        console.log("Accounts: ")
+        console.log(object["accounts"]);
+        var accounts = Object.keys(object["accounts"]);
+        console.log("Keys: ");
+        for (var i = 0; i < accounts.length; i++)
+        {
+            account = accounts[i];
+            chrome.storage.local.get("keys" + account, function(thing)
+            {
+                console.log(thing["keys" + account]);
+                var dates = thing["keys" + account];
+                for (var j = 0; j < dates.length; j++)
+                {
+                    date = dates[j]
+                    chrome.storage.local.get(date, function(item)
+                    {
+                        console.log(item);
+                    });
+                }
+            });
+        }
+    });
+}
+
 /**
 * function printStorage()
 * @purpose: prints the current state of the storage, decrypted
