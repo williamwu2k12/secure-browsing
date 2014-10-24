@@ -255,23 +255,16 @@ function addElement(key, object)
     var siteName = document.createTextNode(linkHTML); //theLink
 
     site.appendChild(siteName);
-    // site.style.textAlign="left";
 
     var select = document.createElement("TD");
     select.appendChild(input);
 
-    // site.colSpan = 9;
-    // select.colSpan = 1;
+    site.colSpan = 11;
+    // select.colSpan = ;
+    row.appendChild(site); //rows consist of a site element
+    row.appendChild(select); //and a select element
 
-    // var style = document.createElement("STYLE");
-    // var width = document.createTextNode("max-width:10px");
-    // style.appendChild(width);
-
-    // site.appendChild(style)
-
-    row.appendChild(site) //rows consist of a site element
-    row.appendChild(select) //and a select element
-    entry.appendChild(row)
+    entry.appendChild(row);
 
     // var newLink = document.createElement("div");
     // var theLink = JSON.parse(object);

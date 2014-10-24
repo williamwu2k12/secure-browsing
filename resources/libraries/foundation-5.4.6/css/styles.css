@@ -1,0 +1,35 @@
+/*
+
+Secure Browsing
+=============
+
+Author:  Luis Vasquez
+
+*/
+
+
+/* --------------------------------------
+   Layout
+   -------------------------------------- */
+
+#features {
+   text-align: center;
+}
+
+/* --------------------------------------
+   Global Styles
+   -------------------------------------- */
+/*div.panel {
+  overflow-x: auto;
+}*/
+
+table {
+    background-color: CadetBlue;
+    table-layout: fixed;
+}
+td {
+   max-width: 860px;
+   overflow: auto;
+   text-overflow: string;
+   white-space: nowrap;
+}
