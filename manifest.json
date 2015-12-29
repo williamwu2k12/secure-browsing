@@ -1,30 +1,33 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Secure Browsing",
-  "description": "This extension provides organized and encrypted site history for a better browsing experience.",
-  "version": "1.0",
+    "name": "Secure Browsing",
+    "description": "This extension provides organized and encrypted site history for a better browsing experience.",
+    "version": "1.0",
 
-  "browser_action":
-  {
-    "default_icon": "/resources/images/icon.png",
-    "default_popup": "/popup.html"
-  },
+    "browser_action":
+    {
+        "default_icon": "/resources/images/icon.png",
+        "default_popup": "/popup.html"
+    },
 
-  "background":
-  {
-    "scripts": ["/resources/libraries/cryptojs/rollups/aes.js", "resources/libraries/cryptojs/rollups/sha256.js", "/storage.js", "/background.js"],
-    "persistent": false
-  },
+    "background":
+    {
+        "scripts": ["/resources/libraries/cryptojs/rollups/aes.js", 
+                    "resources/libraries/cryptojs/rollups/sha256.js", 
+                    "resources/libraries/synaptic/synaptic.js",
+                    "/storage.js", "/background.js"],
+        "persistent": false
+    },
 
-  "permissions":
-  [
-    "history",
-    "tabs",
-    "storage",
-    "unlimitedStorage",
-    "<all_urls>"
-  ],
+    "permissions":
+    [
+        "history",
+        "tabs",
+        "storage",
+        "unlimitedStorage",
+        "<all_urls>"
+    ],
 
-  "incognito": "split"
+    "incognito": "split"
 }
