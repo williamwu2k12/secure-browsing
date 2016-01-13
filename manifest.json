@@ -7,8 +7,8 @@
 
     "browser_action":
     {
-        "default_icon": "/resources/images/icon.png",
-        "default_popup": "/view.html"
+        "default_icon": "/app/img/icon.png",
+        "default_popup": "/app/html/view.html"
     },
 
     "background":
@@ -20,8 +20,8 @@
         //             // "resources/libraries/brain/brain-0.6.3.js",
         //             "/storage.js",
         //             "/background.js"],
-        "scripts": ["resources/libraries/requirejs/require.js",
-                    "events.js"],
+        "scripts": ["/app/script/lib/requirejs/require.js",
+                    "/app/script/events.js"],
         "persistent": false
     },
 
