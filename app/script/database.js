@@ -4,11 +4,17 @@ define(["/app/script/datastore.js",
 
 function(Datastore) {
 
-    function Database(username, password) {
+    function Database() {
 
-        if (username == undefined || password == undefined) {
-            throw new Error("Arguments missing");
+        if (Database.setup == true) {
+            return;
         }
+        Database.setup = true;
+
+
+        var username;
+        var password;
+        var authenticated = false;
 
         var schema = 
         {
@@ -23,29 +29,25 @@ function(Datastore) {
                     name: "accounts",
                     increment: false,
                     indexes: []
-                },
-                {
-                    name: "user." + username,
-                    increment: true,
-                    indexes: ["time"]
                 }
             ]
         };
 
-
-        Datastore().open(schema);
+        Datastore.open(schema, function(){});
         
         var metadata    = new Datastore("metadata");
         metadata.set("sb_version", 1.0);
         metadata.set("db_version", Datastore.DB_VERSION);
         metadata.set("db_schema", schema);
-
         var accounts    = new Datastore("accounts");
-        var links       = new Datastore("user." + username);
+        var links;
 
-        this.signin = function(callback) {
-            accounts.get(username, null, function(value) {
-                var hash_text = CryptoJS.SHA256(password).toString();
+        Database.signin = function(name, pass, callback) {
+            callback = callback != undefined ? callback : function(){};
+            username = name;
+            password = pass;
+            accounts.get(name, null, function(value) {
+                var hash_text = CryptoJS.SHA256(pass).toString();
                 var exists = true;
                 var matches = true;
                 if (value == undefined) {
@@ -57,21 +59,33 @@ function(Datastore) {
                     matches = false;
                 }
                 var success = exists && matches;
+                if (success) {
+                    authenticated = true;
+                    links = new Datastore("user." + name);
+                }
                 callback(success);
             });
         };
 
-        this.signout = function(callback) {
+        Database.signout = function(callback) {
+            callback = callback != undefined ? callback : function(){};
+            username = undefined;
             password = undefined;
+            authenticated = false;
             callback(true);
         };
 
-        this.signup = function(callback) {
-            accounts.get(username, null, function(value) {
-                var success = true
+        Database.signup = function(name, pass, callback) {
+            callback = callback != undefined ? callback : function(){};
+            accounts.get(name, null, function(value) {
+                schema.stores.push({name: "user." + name, increment: true, indexes: ["time"]})
+                Datastore.create_store(schema, function(){});
+
+                var success = true;
                 if (value == undefined) {
-                    var hash_text = CryptoJS.SHA256(password).toString();
-                    accounts.set(username, hash_text, callback);
+                    var hash_text = CryptoJS.SHA256(pass).toString();
+                    accounts.set(name, hash_text);
+                    callback(success);
                 } else {
                     console.log("Error: account already exists");
                     success = false;
@@ -81,33 +95,20 @@ function(Datastore) {
 
         };
 
-        function wrap_callback(fn) {
-            return function() {
-                if (arguments.length == 0) {
-                    fn.apply(self, [function(){}]);
-                } else {
-                    fn.apply(self, arguments);
-                }
-            };
-        }
-        this.signup = wrap_callback(this.signup);
-        this.signin = wrap_callback(this.signin);
-        this.signout = wrap_callback(this.signout);
 
-
-        function encrypt(plain_text, pass) {
-            return CryptoJS.AES.encrypt(plain_text, pass).toString();
+        function encrypt(plain_text, password) {
+            return CryptoJS.AES.encrypt(plain_text, password).toString();
         }
-        function decrypt(cipher_text, pass) {
-            return CryptoJS.AES.decrypt(cipher_text, pass).toString(CryptoJS.enc.Utf8);
+        function decrypt(cipher_text, password) {
+            return CryptoJS.AES.decrypt(cipher_text, password).toString(CryptoJS.enc.Utf8);
         }
 
 
-        this.count = function(callback) {
+        Database.count = function(callback) {
             links.count(callback);
         }
 
-        this.get = function(key, index_name, callback) {
+        Database.get = function(key, index_name, callback) {
             links.get(key, index_name, function(value) {
                 var plain_text = decrypt(value, password);
                 if (callback != undefined) {
@@ -116,7 +117,7 @@ function(Datastore) {
             });
         };
 
-        this.set = function(key, item, callback) {
+        Database.set = function(key, item, callback) {
             var plain_text = JSON.stringify(item);
             var cipher_text = encrypt(plain_text, password);
             if (callback != undefined) {
@@ -126,7 +127,7 @@ function(Datastore) {
             }
         }
 
-        this.push = function(item, callback) {
+        Database.push = function(item, callback) {
             var plain_text = JSON.stringify(item);
             var cipher_text = encrypt(plain_text, password);
             if (callback != undefined) {
@@ -136,7 +137,30 @@ function(Datastore) {
             }
         };
 
+        function wrap_check(fn) {
+            return function() {
+                var args = Array.prototype.slice.call(arguments);
+                if (!authenticated) {
+                    throw new Error("No user is currently authenticated.");
+                }
+                var callback;
+                if (args.length > 0) {
+                    callback = args[args.length - 1];
+                }
+                if (typeof(callback) != "function") {
+                    args.push(function(){});
+                }
+                fn.apply(Database, args);
+            }
+        }
+
+        Database.count  = wrap_check(Database.count);
+        Database.get    = wrap_check(Database.get);
+        Database.set    = wrap_check(Database.set);
+        Database.push   = wrap_check(Database.push);
+
     }
+    Database();
 
     return Database;
 

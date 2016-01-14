@@ -22,6 +22,8 @@ define(["/app/script/database.js"], function(Database) {
     var SB = {};
     SB.Database = Database;
 
+    var DB = Database;
+
     return SB;
 
 });

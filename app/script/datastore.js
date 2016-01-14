@@ -2,7 +2,11 @@ define([],
 
 function() {
 
-    var Datastore = function(name) {
+    /*
+      @note: to initialize:
+      > Datastore().open(schema);
+    */
+    function Datastore(name) {
 
         var self = this;
 
@@ -12,6 +16,8 @@ function() {
 
             Datastore.READ_WRITE    = "readwrite"; // 1 in chrome
             Datastore.READ_ONLY     = "readonly"; // 0 in chrome
+            Datastore.CREATE        = "create";
+            Datastore.DELETE        = "delete";
 
             Datastore.indexedDB     = window.indexedDB ||
                                       window.webkitIndexedDB ||
@@ -19,11 +25,98 @@ function() {
                                       window.msIndexedDB ||
                                       window.shimIndexedDB;
 
-            Datastore.db            = undefined;
+            Datastore.idb           = undefined;
             Datastore.promise       = undefined;
 
-            Datastore.open          = promise_init;
-            Datastore.close         = function() {db.close();};
+
+
+            function init(resolve, operation, schema, db_version) {
+                var open_req;
+                var db_updated = db_version != undefined ? true : false;
+                if (db_version == undefined) {
+                    open_req = Datastore.indexedDB.open(Datastore.DB_NAME);
+                } else {
+                    open_req = Datastore.indexedDB.open(Datastore.DB_NAME, db_version);
+                }
+
+                // will be run on every startup, setup schema if necessary
+                open_req.onupgradeneeded = function(evt) {
+                    Datastore.idb = open_req.result;
+                    var stores = schema.stores;
+                    var store;
+                    for (var i in stores) {
+                        store = stores[i];
+                        if (operation == Datastore.CREATE) {
+                            if (!Datastore.idb.objectStoreNames.contains(store.name)) {
+                                init_store(store.name, store.increment, store.indexes)
+                            }
+                        } else if (operation == Datastore.DELETE) {
+                            if (Datastore.idb.objectStoreNames.contains(store.name)) {
+                                Datastore.idb.deleteObjectStore(store.name);
+                            }
+                        }
+
+                    }
+                };
+
+                open_req.onsuccess = function(evt) {
+                    Datastore.idb = open_req.result;
+                    if (db_updated == true) {
+                        resolve();
+                    } else {
+                        Datastore.DB_VERSION = Datastore.idb.version + 1;
+                        Datastore.idb.close();
+                        init(resolve, Datastore.CREATE, schema, Datastore.DB_VERSION);
+                    }
+                };
+            }
+
+            function init_store(store_name, increment, indexes) {
+                var store = Datastore.idb.createObjectStore(store_name, {autoIncrement: increment});
+                store.createIndex("index", "", {unique: false});
+                for (var i in indexes) {
+                    store.createIndex(indexes[i] + "_index", indexes[i], {unique: false});
+                }
+            }
+
+            /*
+            @purpose: inits a promise object that all other api calls will chain on, which guarantees that the datastore has been setup
+            @param: <String> operation [Datastore.CREATE, Datastore.DELETE]: the operation to apply to the schema; if CREATE, then all object stores in the schema will be added to the datastore, if DELETE, then they will be deleted
+            @param: <Function> callback(): a function that executes immediately after the datastore has been initialized
+            */
+            function init_promise(operation, schema, callback) {
+                Datastore.promise = new Promise(function(resolve, reject) {
+                    init(resolve, operation, schema);
+                });
+                Datastore.promise = Datastore.promise.then(function() {
+                    if (callback != undefined) {
+                        callback();
+                    }
+                });
+            }
+
+            Datastore.open          = function(schema, callback) {
+                callback = callback != undefined ? callback : function(){};
+                init_promise(Datastore.CREATE, schema, callback);
+            };
+            Datastore.close         = function(callback) {
+                callback = callback != undefined ? callback : function(){};
+                Datastore.idb.close(); callback();
+            };
+            Datastore.create_store  = function(schema, callback) {
+                callback = callback != undefined ? callback : function(){};
+                if (Datastore.idb != undefined) {
+                    Datastore.close();
+                }
+                init_promise(Datastore.CREATE, schema, callback);
+            };
+            Datastore.delete_store  = function(schema, callback) {
+                callback = callback != undefined ? callback : function(){};
+                if (Datastore.idb != undefined) {
+                    Datastore.close();
+                }
+                init_promise(Datastore.DELETE, schema, callback);
+            };
         }
 
         if (Datastore.DB_NAME == undefined) {
@@ -33,68 +126,8 @@ function() {
 
 
 
-        function init(resolve, schema, db_version) {
-            var open_req;
-            var db_updated = db_version != undefined ? true : false;
-            if (db_version == undefined) {
-                open_req = Datastore.indexedDB.open(Datastore.DB_NAME);
-            } else {
-                open_req = Datastore.indexedDB.open(Datastore.DB_NAME, db_version);
-            }
 
-            // will be run on every startup, setup schema if necessary
-            open_req.onupgradeneeded = function(evt) {
-                var stores = schema.stores;
-                var store;
-                var store_name;
-                var increment;
-                var indexes;
-                for (var x in stores) {
-
-                    store = stores[x];
-                    store_name = store.name;
-                    increment = store.increment;
-                    indexes = store.indexes;
-
-                    Datastore.db = open_req.result;
-
-                    if (!Datastore.db.objectStoreNames.contains(store_name)) {
-                        var store = Datastore.db.createObjectStore(store_name, {autoIncrement: increment});
-                        var index;
-                        store.createIndex("index", "", {unique: false});
-                        for (var i in indexes) {
-                            index = indexes[i];
-                            store.createIndex(index + "_index", index, {unique: false});
-                        }
-                    }
-
-                }
-            };
-
-            open_req.onsuccess = function(evt) {
-                Datastore.db = open_req.result;
-                if (db_updated == true) {
-                    resolve();
-                } else {
-                    Datastore.DB_VERSION = Datastore.db.version + 1;
-                    Datastore.db.close();
-                    init(resolve, schema, Datastore.DB_VERSION);
-                }
-            };
-        }
-
-        function promise_init(schema, callback) {
-            Datastore.promise = new Promise(function(resolve, reject) {
-                init(resolve, schema);
-            });
-            Datastore.promise = Datastore.promise.then(function() {
-                if (callback != undefined) {
-                    callback();
-                }
-            });
-        }
-
-
+        // check whether this is suppose to be an instance
         if (name != undefined) {
             self.store_name = name;
 
@@ -102,7 +135,7 @@ function() {
                 store_name = store_name != undefined && store_name != null ? store_name : self.store_name;
                 permissions = permissions != undefined && permissions != null ? permissions : Datastore.READ_WRITE;
 
-                var transaction = Datastore.db.transaction([store_name], permissions);
+                var transaction = Datastore.idb.transaction([store_name], permissions);
                 var store = transaction.objectStore(store_name);
                 return store;
             }
@@ -205,8 +238,9 @@ function() {
             }
             
             /*
-              @purpose: Removes the last entry in the object store by setting its value to an empty string.
+              @purpose: Removes the current last entry in the object store by setting its value to an empty string.
               @param: <Function> callback(<Object> evt): a function that processes the resultant event
+              @note: will not decrement the count
             */
             this.pop    = function(callback) {
                 self.count(function(num) {
@@ -242,11 +276,11 @@ function() {
 
 
         
-            var check_init = function(fn) {
+            function check_init(fn) {
                 return function() {
                     var args = Array.prototype.slice.call(arguments);
                     if (Datastore.promise == undefined) {
-                        promise_init(schema);
+                        Datastore.open(schema);
                     }
                     Datastore.promise = Datastore.promise.then(function() {
                         return new Promise(function(resolve, reject) {
@@ -255,7 +289,6 @@ function() {
                                 callback = args[args.length - 1];
                             }
                             if (typeof(callback) != "function") {
-                                // args.push(function(evt){console.log(evt.target.result);});
                                 args.push(function(){});
                             }
                             fn.apply(self, args);
@@ -278,6 +311,8 @@ function() {
 
         }
     }
+
+    Datastore();
 
     return Datastore;
 
