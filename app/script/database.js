@@ -42,6 +42,21 @@ function(Datastore) {
         var accounts    = new Datastore("accounts");
         var links;
 
+        /*
+          @purpose: Sign ins with a username and password.
+          @param: <String> name: the username
+          @param: <String> pass: the password
+          @param: <Function> callback(<Boolean> success): function called after the signin has completed
+            <Boolean> success: boolean indicating whether or not the signin succeeded
+          @note: signin will fail if the account does not currently exist, or if the username and password do not match
+          @note: need to implement if a user is already signed in
+          @examples:
+            Database.signin("user0", "pass_phrase", function(success) {
+                if (success == true) {
+                    console.log("user successfully signed in");
+                }
+            });
+        */
         Database.signin = function(name, pass, callback) {
             callback = callback != undefined ? callback : function(){};
             username = name;
@@ -67,6 +82,18 @@ function(Datastore) {
             });
         };
 
+        /*
+          @purpose: Signs out the current authenticated user, if there is one.
+          @param: <Function> callback(<Boolean> success): function called after the signout has completed
+            @param: <Boolean> success: boolean indicating whether or not the signout succeeded
+          @note: in its current implementation, signout will always succeed
+          @examples:
+            Database.signout(function(success) {
+                if (success == true) {
+                    console.log("user successfully signed out");
+                }
+            });
+        */
         Database.signout = function(callback) {
             callback = callback != undefined ? callback : function(){};
             username = undefined;
@@ -75,6 +102,20 @@ function(Datastore) {
             callback(true);
         };
 
+        /*
+          @purpose: Signs up a new user, if the user does not already exist.
+          @param: <String> name: the username
+          @param: <String> pass: the password
+          @param: <Function> callback(<Boolean> success): function called after the signup has completed
+            @param: <Boolean> success: boolean indicating whether or not the signup succeeded
+          @note: signup will fail if the account already exists
+          @examples:
+            Database.signup(function(success) {
+                if (success == true) {
+                    console.log("user successfully signed up");
+                }
+            });
+        */
         Database.signup = function(name, pass, callback) {
             callback = callback != undefined ? callback : function(){};
             accounts.get(name, null, function(value) {
@@ -104,37 +145,85 @@ function(Datastore) {
         }
 
 
+        /*
+          @purpose: Finds the current count of links in the database, and handles the number in a callback.
+          @param: <Function> callback(<Integer> num): function called after the count has been found
+            @param: <Integer> num: the number of links in the database
+          @examples:
+            Database.count(function(num) {
+                if (num > 100000) {
+                    console.log("too many links in the database!");
+                }
+            });
+        */
         Database.count = function(callback) {
             links.count(callback);
         }
 
-        Database.get = function(key, index_name, callback) {
-            links.get(key, index_name, function(value) {
-                var plain_text = decrypt(value, password);
-                if (callback != undefined) {
-                    callback(plain_text);
+        /*
+          @purpose: Gets an entry or a range of entries from an object store, and decrypts them.
+          @param: <Integer> key: the numeric key of the entry to retrieve
+                  <Array> key: an array with two elements that specify the start and end of a range
+          @param: <String> index_name [null]: the name of the index, use value null to use the default store keys
+          @param: <Function> callback(<Array> objects): a function that processes a list of results
+            @param: <Array> objects: an array of objects to be processed
+          @examples:
+            Database.get(1, null, function(objects) {
+                console.log(objects[0]);
+            });
+            Database.get([1, 3], null, function(objects) {
+                for (var i in objects) {
+                    var div = Document.createElement("div");
+                    div.text = objects[i];
+                    Document.appendChild(div);
                 }
+            })
+        */
+        Database.get = function(key, index_name, callback) {
+            links.get(key, index_name, function(cipher_texts) {
+                var objects = [];
+                var plain_text;
+
+                if (!Array.isArray(cipher_texts)) {
+                    cipher_texts = [cipher_texts];
+                }
+                for (var i in cipher_texts) {
+                    plain_text = decrypt(cipher_texts[i], password);
+                    objects.push(JSON.parse(plain_text));
+                }
+                callback(objects);
             });
         };
 
+        /*
+          @purpose: Sets an encrypted key-item pair as an entry in the object store.
+          @param: <Object> key: the key (usually the integer id) of the entry, which will not be encrypted
+          @param: <Object> item: the item to associate with the key, which will be encrypted
+          @param: <Function> callback(<Object> evt): a function that processes the resultant event
+            @param: <Object> evt: the resultant event
+          @note: callback function is not necessary
+          @examples:
+            Database.set(3, {url: "https://facebook.com", title: "Facebook", time: 123});
+        */
         Database.set = function(key, item, callback) {
             var plain_text = JSON.stringify(item);
             var cipher_text = encrypt(plain_text, password);
-            if (callback != undefined) {
-                links.set(key, ciphertext, callback);
-            } else {
-                links.set(key, ciphertext);
-            }
+            links.set(key, ciphertext, callback);
         }
 
+        /*
+          @purpose: Encrypts and pushes an item to the end of the sorted object store, with this.count() + 1 as its index.
+          @param: <Object> item: the item to push, which will be encrypted
+          @param: <Function> callback(<Object> evt): a function that processes the resultant event
+            @param: <Object> evt: the resultant event
+          @note: callback function is not necessary
+          @examples:
+            Database.push({url: "https://facebook.com", title: "Facebook", time: 123});
+        */
         Database.push = function(item, callback) {
             var plain_text = JSON.stringify(item);
             var cipher_text = encrypt(plain_text, password);
-            if (callback != undefined) {
-                links.push(cipher_text, callback);
-            } else {
-                links.push(cipher_text);
-            }
+            links.push(cipher_text, callback);
         };
 
         function wrap_check(fn) {

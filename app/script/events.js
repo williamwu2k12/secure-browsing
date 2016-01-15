@@ -1,14 +1,6 @@
 /* handles page events, controller class */
 
 p = function(string){console.log(string);};
-// require(["/app/script/model.js"]
-// function() {
-//     (function() {
-
-//     })();
-// });
-// );
-
 require(["/app/script/model.js"],
 function(SB) {
 

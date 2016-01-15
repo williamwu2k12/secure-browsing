@@ -159,7 +159,7 @@ function() {
             /*
               @purpose: Gets an entry or a range of entries from an object store.
               @param: <Integer> key: the numeric key of the entry to retrieve
-              @param: <Array> key: an array with two elements that specify the start and end of a range
+                      <Array> key: an array with two elements that specify the start and end of a range
               @param: <String> index_name [null]: the name of the index, use value null to use the default store keys
               @param: <Function> callback(<Object> obj): a function that takes in the resultant object, or an array of resultant objects, dependant on whether the key is an integer or an array
               @examples:
