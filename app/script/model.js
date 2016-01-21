@@ -14,10 +14,7 @@ require.config({
 
 define(["/app/script/database.js"], function(Database) {
 
-
     /* do any initial database setup */
-
-    // indexedDB.deleteDatabase("secure_browsing");
 
     var SB = {};
     SB.Database = Database;

@@ -4,7 +4,9 @@ p = function(string){console.log(string);};
 require(["/app/script/model.js"],
 function(SB) {
 
-    username = "kevin";
+    // indexedDB.deleteDatabase("secure_browsing");
+
+    username = "user";
     password = "pass";
 
     var DB = SB.Database;
