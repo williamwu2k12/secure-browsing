@@ -25,7 +25,10 @@ require(["/app/script/model.js"], function(SB) {
             DB.get([num - 20, num], null, function(values) {
                 for (var i in values) {
                     value = values[i];
-                    console.log(value);
+                    var div = document.createElement("div");
+                    var txt = document.createTextNode(JSON.stringify(value));
+                    div.appendChild(txt);
+                    document.getElementById("history").appendChild(div);
                 }
             });
         });
