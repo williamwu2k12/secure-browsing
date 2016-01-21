@@ -16,8 +16,7 @@
 
 
 
-SB = window.SB;
-// require(["/app/script/model.js"], function(SB) {
+require(["/app/script/model.js"], function(SB) {
 
     var DB = SB.Database;
     DB.signin("user", "pass", function() {
@@ -31,4 +30,4 @@ SB = window.SB;
             });
         });
     });
-// })
+})
