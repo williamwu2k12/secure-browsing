@@ -30,4 +30,4 @@ require(["/app/script/model.js"], function(SB) {
             });
         });
     });
-})
+});

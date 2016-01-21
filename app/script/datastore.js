@@ -18,6 +18,7 @@ function() {
             Datastore.READ_ONLY     = "readonly"; // 0 in chrome
             Datastore.CREATE        = "create";
             Datastore.DELETE        = "delete";
+            Datastore.NOOP          = "noop";
 
             Datastore.indexedDB     = window.indexedDB ||
                                       window.webkitIndexedDB ||
@@ -61,13 +62,21 @@ function() {
 
                 open_req.onsuccess = function(evt) {
                     Datastore.idb = open_req.result;
-                    if (db_updated == true) {
+                    if (db_updated == true || operation == Datastore.NOOP) {
                         resolve();
                     } else {
                         Datastore.DB_VERSION = Datastore.idb.version + 1;
                         Datastore.idb.close();
                         init(resolve, Datastore.CREATE, schema, Datastore.DB_VERSION);
                     }
+                };
+
+                open_req.onerror = function(evt) {
+                    console.log(evt);
+                };
+
+                open_req.onblocked = function(evt) {
+                    console.log(evt);
                 };
             }
 
@@ -85,23 +94,23 @@ function() {
             @param: <Function> callback(): a function that executes immediately after the datastore has been initialized
             */
             function init_promise(operation, schema, callback) {
+                callback = callback != undefined ? callback : function(){};
                 Datastore.promise = new Promise(function(resolve, reject) {
                     init(resolve, operation, schema);
                 });
                 Datastore.promise = Datastore.promise.then(function() {
-                    if (callback != undefined) {
-                        callback();
-                    }
+                    callback();
                 });
             }
 
             Datastore.open          = function(schema, callback) {
                 callback = callback != undefined ? callback : function(){};
-                init_promise(Datastore.CREATE, schema, callback);
+                init_promise(Datastore.NOOP, schema, callback);
             };
             Datastore.close         = function(callback) {
                 callback = callback != undefined ? callback : function(){};
-                Datastore.idb.close(); callback();
+                Datastore.idb.close();
+                callback();
             };
             Datastore.create_store  = function(schema, callback) {
                 callback = callback != undefined ? callback : function(){};

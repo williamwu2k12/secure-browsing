@@ -14,7 +14,7 @@ function(Datastore) {
 
         var username;
         var password;
-        var authenticated = false;
+        Database.auth = false;
 
         var schema = 
         {
@@ -75,7 +75,7 @@ function(Datastore) {
                 }
                 var success = exists && matches;
                 if (success) {
-                    authenticated = true;
+                    Database.auth = true;
                     links = new Datastore("user." + name);
                 }
                 callback(success);
@@ -98,7 +98,7 @@ function(Datastore) {
             callback = callback != undefined ? callback : function(){};
             username = undefined;
             password = undefined;
-            authenticated = false;
+            Database.auth = false;
             callback(true);
         };
 
@@ -229,7 +229,7 @@ function(Datastore) {
         function wrap_check(fn) {
             return function() {
                 var args = Array.prototype.slice.call(arguments);
-                if (!authenticated) {
+                if (Database.auth == false) {
                     throw new Error("No user is currently authenticated.");
                 }
                 var callback;
