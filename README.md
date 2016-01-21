@@ -2,6 +2,7 @@
 
 William Wu  
 Luis Vasquez
+Kevin Huynh
 
 
 ## Planned Features
