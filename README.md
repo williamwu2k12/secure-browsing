@@ -1,11 +1,24 @@
 # Secure Browsing
 
 William Wu  
-Luis Vasquez
+Luis Vasquez  
 Kevin Huynh
 
 
 ## Planned Features
+
+
+### Problem and Solution
+
+Many existing websites/services have great implementations of machine learning techniques that attempt to solve the search problem of returning the right results for a query, or for any user based on their past search history on that website. For example, Google has Page Rank, and Facebook has the News Feed. Other sites, such as Stack Overflow and Amazon, also have their own algorithms. There are also a lot of sites that don't implement any machine learning techniques. In general, however, the search solution is targeted in solving the average case, and limited in their data, which are only the server requests to their specific site. With these limitations, the websites can infer what is generally useful and what is not. They can also infer what is generally useful to each specific registered user.
+
+There is a solution that augments the existing solution. Individual browsing history is a super valuable resource that contains a huge amount of data; every day, a user can browse approximately 1000 links. Individual browsing history is a much better indicator of a user's preferences, and is a resource that every company does not have access to (each website only has access to requests to their own servers). In addition, this data's sequence is also super important; to solve a problem, the user makes many choices of which links to click on and which ones to ignore.
+
+The solution, therefore, is to run a neural network locally on the browsing history. Because neural networks generally take a long time to train, the browser can iterate on each new link browsed, and each link not browsed. This will minimize the amount of computation spikes, and make machine learning actually feasible on every device, especially computers. Neural network quality is highly dependent on featurization and filtration decisions. A bag of words model of the most frequent words, removing HTML tags and ignoring image and videos, might be an interesting idea.
+
+On the user side, the augmentation follows the Avast Antivirus model. Avast labels each link on a page with a security rating (colored red for dangerous, green for safe). For this Chrome extension solution, each link on a page can be labeled with the neural network's prediction on its usefulness (colors or numbers).
+
+With such sensitive data, security is an extremely relevant concern. Neural network weights and browsing history should be encrypted, since this is personal user data. Because of this, database design should account for encryption, as well as indexing.
 
 
 ### Security
