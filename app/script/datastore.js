@@ -62,7 +62,8 @@ function() {
 
                 open_req.onsuccess = function(evt) {
                     Datastore.idb = open_req.result;
-                    if (db_updated == true || operation == Datastore.NOOP) {
+                    var stores_exist = schema.stores.map(function(store) {return Datastore.idb.objectStoreNames.contains(store.name);}).reduce(function(prev, next) {return prev && next;});
+                    if ((db_updated == true || operation == Datastore.NOOP) && stores_exist) {
                         resolve();
                     } else {
                         Datastore.DB_VERSION = Datastore.idb.version + 1;
