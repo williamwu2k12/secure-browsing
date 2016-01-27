@@ -22,7 +22,8 @@
         //             "/background.js"],
         "scripts": ["/app/script/lib/requirejs/require.js",
                     "/app/script/events.js"],
-        "persistent": false
+        // "persistent": false
+        "persistent": true
     },
 
     "permissions":
