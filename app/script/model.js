@@ -19,12 +19,6 @@ define(["/app/script/database.js"], function(Database) {
     var SB = {};
     SB.Database = Database;
 
-    var DB = Database;
-    if (window.SB == undefined) {
-        window.SB = SB; // for testing purposes
-    }
-
-
     return SB;
 
 });

@@ -1,5 +1,48 @@
-Hello, World.
-<script src="/app/script/lib/requirejs/require.js"></script>
-<!-- <script src="/app/test/test_datastore.js"></script> <!-- get rid of later --> -->
-<script src="view.js"></script>
-<div id="history"></div>
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="../css/lib/bootstrap-3.3.6-dist/css/bootstrap.min.css">
+        <script src="/app/script/lib/requirejs/require.js"></script>
+        <script src="view.js"></script>
+        <style>
+            body
+            {
+                min-width: 300px;
+                max-width: 300px;
+                overflow: hidden;
+                word-wrap: break-word;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            
+            <h4>Secure Browsing</h4>
+
+            <form class="form-signin" id="auth">
+                <input class="form-control" placeholder="username" type="text" name="username" required autofocus>
+                <input class="form-control" placeholder="password" type="password" name="password" required>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="remember-me">Remember me</label>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" type="button" name="signin">Sign in</button>
+                    <button class="btn btn-primary" type="button" name="signup">Sign up</button>
+                </div>
+            </form>
+
+            <form class="form-signin" id="deauth">
+                <button class="btn btn-primary" type="button" name="signout">Sign out</button>
+                <br><br>
+            </form>
+
+            <div id="link_table" class="table"></div>
+
+            <br>
+
+        </div>
+    </body>
+</html>

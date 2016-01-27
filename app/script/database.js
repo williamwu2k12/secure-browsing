@@ -1,10 +1,56 @@
 define(["/app/script/datastore.js",
         "CryptoJS.AES",
-        "CryptoJS.SHA256"], 
+        "CryptoJS.SHA256",
+        "/app/script/lib/brain/brain-0.6.3.js",
+        "/app/script/lib/convnetjs/convnet.js"], 
 
 function(Datastore) {
 
     function Database() {
+
+        var net = new brain.NeuralNetwork();
+
+        var data = [{input: [0, 0], output: [0]},
+            {input: [0, 1], output: [1]},
+            {input: [1, 0], output: [1]},
+            {input: [1, 1], output: [0]}]
+
+        net.train(data);
+
+        console.log(net.run([0, 0]));
+
+        // var xml_req = new XMLHttpRequest();
+        // xml_req.onreadystatechange = function() {
+        //     if (xml_req.readyState == 4 && xml_req.status == 200) {
+        //         var response = xml_req.responseText;
+        //         var html = document.createElement("html");
+        //         html.innerHTML = response;
+        //         var i = 0;
+        //         while (i < html.children.length) {
+        //             if (html.children[i].tagName.toLowerCase() == "head") {
+        //                 html.children[i].remove();
+        //                 i -= 1;
+        //             }
+        //             i += 1;
+        //         }
+        //         var raw_text = html.textContent;
+
+        //         // featurizing
+        //         var raw_words = raw_text.split(/[\s\n\r\t]+/);
+        //         console.log(raw_words);
+        //         raw_words = raw_words.filter(function(word) {return word != ""});
+        //         raw_words = raw_words.map(function(word) {return word.replace(/\W/g, "");});
+        //     }
+        // }
+        // xml_req.open("GET", "https://www.example.com", false);
+        // xml_req.send();
+
+
+
+
+
+
+
 
         if (Database.setup == true) {
             return;
@@ -33,14 +79,15 @@ function(Datastore) {
             ]
         };
 
-        Datastore.open(schema, function(){});
+        Datastore.open(schema, function() {});
         
         var metadata    = new Datastore("metadata");
         metadata.set("sb_version", 1.0);
         metadata.set("db_version", Datastore.DB_VERSION);
         metadata.set("db_schema", schema);
         var accounts    = new Datastore("accounts");
-        var links;
+        var history;
+        var network;
 
         /*
           @purpose: Sign ins with a username and password.
@@ -76,7 +123,8 @@ function(Datastore) {
                 var success = exists && matches;
                 if (success) {
                     Database.auth = true;
-                    links = new Datastore("user." + name);
+                    history = new Datastore("history." + name);
+                    network = new Datastore("network." + name);
                 }
                 callback(success);
             });
@@ -119,21 +167,23 @@ function(Datastore) {
         Database.signup = function(name, pass, callback) {
             callback = callback != undefined ? callback : function(){};
             accounts.get(name, null, function(value) {
-                schema.stores.push({name: "user." + name, increment: true, indexes: ["time"]})
+                schema.stores.push({name: "history." + name, increment: true, indexes: ["time"]})
                 Datastore.create_store(schema, function(){});
 
-                var success = true;
                 if (value == undefined) {
                     var hash_text = CryptoJS.SHA256(pass).toString();
-                    accounts.set(name, hash_text);
-                    callback(success);
+                    accounts.set(name, hash_text, function(evt) {
+                        if (evt.returnValue == true) {
+                            callback(true);
+                        } else {
+                            callback(false);
+                        }
+                    });
                 } else {
                     console.log("Error: account already exists");
-                    success = false;
-                    callback(success);
+                    callback(false);
                 }
             });
-
         };
 
 
@@ -157,7 +207,7 @@ function(Datastore) {
             });
         */
         Database.count = function(callback) {
-            links.count(callback);
+            history.count(callback);
         }
 
         /*
@@ -180,7 +230,7 @@ function(Datastore) {
             })
         */
         Database.get = function(key, index_name, callback) {
-            links.get(key, index_name, function(cipher_texts) {
+            history.get(key, index_name, function(cipher_texts) {
                 var objects = [];
                 var plain_text;
 
@@ -208,7 +258,7 @@ function(Datastore) {
         Database.set = function(key, item, callback) {
             var plain_text = JSON.stringify(item);
             var cipher_text = encrypt(plain_text, password);
-            links.set(key, ciphertext, callback);
+            history.set(key, ciphertext, callback);
         }
 
         /*
@@ -223,7 +273,7 @@ function(Datastore) {
         Database.push = function(item, callback) {
             var plain_text = JSON.stringify(item);
             var cipher_text = encrypt(plain_text, password);
-            links.push(cipher_text, callback);
+            history.push(cipher_text, callback);
         };
 
         function wrap_check(fn) {
