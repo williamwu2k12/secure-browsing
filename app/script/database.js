@@ -8,46 +8,16 @@ function(Datastore) {
 
     function Database() {
 
-        var net = new brain.NeuralNetwork();
+        // var net = new brain.NeuralNetwork();
 
-        var data = [{input: [0, 0], output: [0]},
-            {input: [0, 1], output: [1]},
-            {input: [1, 0], output: [1]},
-            {input: [1, 1], output: [0]}]
+        // var data = [{input: [0, 0], output: [0]},
+        //     {input: [0, 1], output: [1]},
+        //     {input: [1, 0], output: [1]},
+        //     {input: [1, 1], output: [0]}]
 
-        net.train(data);
+        // net.train(data);
 
-        console.log(net.run([0, 0]));
-
-        // var xml_req = new XMLHttpRequest();
-        // xml_req.onreadystatechange = function() {
-        //     if (xml_req.readyState == 4 && xml_req.status == 200) {
-        //         var response = xml_req.responseText;
-        //         var html = document.createElement("html");
-        //         html.innerHTML = response;
-        //         var i = 0;
-        //         while (i < html.children.length) {
-        //             if (html.children[i].tagName.toLowerCase() == "head") {
-        //                 html.children[i].remove();
-        //                 i -= 1;
-        //             }
-        //             i += 1;
-        //         }
-        //         var raw_text = html.textContent;
-
-        //         // featurizing
-        //         var raw_words = raw_text.split(/[\s\n\r\t]+/);
-        //         console.log(raw_words);
-        //         raw_words = raw_words.filter(function(word) {return word != ""});
-        //         raw_words = raw_words.map(function(word) {return word.replace(/\W/g, "");});
-        //     }
-        // }
-        // xml_req.open("GET", "https://www.example.com", false);
-        // xml_req.send();
-
-
-
-
+        // console.log(net.run([0, 0]));
 
 
 
@@ -187,6 +157,79 @@ function(Datastore) {
         };
 
 
+        Database.train = function(src_protocol, src_html, chosen, callback) {
+            var doc = document.createElement("html");
+            doc.innerHTML = html;
+            var links = doc.getElementsByTagName("a");
+            window.links = links;
+            var link;
+
+            return;
+
+            for (var k = 0; k < links.length; k++) {
+                link = links[k];
+                var xml_req = new XMLHttpRequest();
+                xml_req.onreadystatechange = function() {
+                    if (xml_req.readyState == 4 && xml_req.status == 200) {
+                        var response = xml_req.responseText;
+                        var html = document.createElement("html");
+                        html.innerHTML = response;
+                        var i = 0;
+                        while (i < html.children.length) {
+                            if (html.children[i].tagName.toLowerCase() == "head") {
+                                html.children[i].remove();
+                                i -= 1;
+                            }
+                            i += 1;
+                        }
+                        var raw_text = html.textContent;
+
+                        // featurizing
+                        var raw_words = raw_text.split(/[\s\n\r\t]+/);
+                        console.log(raw_words);
+                        raw_words = raw_words.filter(function(word) {return word != ""});
+                        raw_words = raw_words.map(function(word) {return word.replace(/\W/g, "");});
+
+                        var char_counts = {};
+                        for (var i = 0; i < raw_text.length; i++) {
+                            if (!(raw_text[i] in char_counts)) {
+                                char_counts[raw_text[i]] += 1;
+                            }
+                        }
+
+                        var features = [];
+                        var letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+                        var char_count;
+                        for (var i = 0; i < letters.length; i++) {
+                            char_count = char_counts[letters[i]];
+                            if (letter != undefined) {
+                                features.push(char_count);
+                            } else {
+                                features.push(0);
+                            }
+                            char_count = char_counts[letters[i].toUpperCase()];
+                            if (letter != undefined) {
+                                features.push(char_count);
+                            } else {
+                                features.push(0);
+                            }
+                        }
+                        features.push(raw_words.length);
+
+                        var visited = true;
+                        var classification = 0;
+                        if (visited) {
+                            classification = 1;
+                        }
+                        net.train([{input: features, output: [classification]}]);
+                    }
+                }
+                xml_req.open("GET", "https://www.example.com", false);
+                xml_req.send();
+            }
+        }
+
+
         function encrypt(plain_text, password) {
             return CryptoJS.AES.encrypt(plain_text, password).toString();
         }
@@ -280,7 +323,9 @@ function(Datastore) {
             return function() {
                 var args = Array.prototype.slice.call(arguments);
                 if (Database.auth == false) {
-                    throw new Error("No user is currently authenticated.");
+                    // throw new Error("No user is currently authenticated.");
+                    console.log("No user is currently authenticated.");
+                    return;
                 }
                 var callback;
                 if (args.length > 0) {

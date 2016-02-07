@@ -1,0 +1,44 @@
+4. Team Member 1
+William Wu
+year: 4th
+major: Computer Science
+email: william.wu@berkeley.edu
+role: Full Stack Software Engineer
+
+Work Experience:
+- Amazon: Software Development Engineer Intern
+- Kite: Code Curator
+
+Project Experience:
+- Tyfti: Event Management iOS Application
+
+5. Team Member 2
+Luis Vasquez
+year: 4th
+major: Computer Science
+email: luisfv@berkeley.edu
+role: Software Engineer, Data Science
+
+Work Experience:
+- Kite: Code Curator
+
+Project Experience:
+- Tyfti: Event Management iOS Application
+
+10. Project Description
+Secure Browsing is a Google Chrome extension that utilizes browser history to enhance browser functionality. Using a client side neural network trained on browser history, Secure Browsing can help the user choose better and more interesting links, based on their own personalized URL page rank. In addition, all of the user's history, neural network weights, and additional data is encrypted and stored in indexedDB to provide security for such valuable information.
+
+11. Origin Story
+Secure Browsing solves three problems: industry monetary optimization, algorithm differences between companies, and lack of security regarding local browser data. Companies like Google and Facebook rely heavily on advertising to make money, so their solutions are not always optimized for the end user. In addition, each company has its own machine learning algorithms (or none at all), which are based only on the data they collect from visits to their servers; this limits their capability in understanding user needs to one domain. Also, many of these algorithms are based on a universal average and aren't tailored to each user. Browsing history is essentially the results of a search problem, where some url is the solution, and the objective is to find it while minimizing the number of links traversed (cost). I chose to tackle this problem because solving it will save people time browsing. I'm also extremely interested in machine learning and realized that browser data is a massive resource.
+
+12. Progress
+Most of the backend and encryption is finished. The user interface is currently lacking. The team is currently working on featurizing HTML pages and setting up the neural network to train on browser history. The first milestone will be submitting the first version of Secure Browsing to the Google Chrome Web Store, which will happen after the user interface has been touched up and the neural network has been completed and tested. The team needs to do a lot of research on web scraping, featurizing, HTML parsing, and browsing patterns.
+
+13. Competitors
+Just a couple weeks ago at the career fair, I spoke to Samsung and they mentioned that they are doing something similar, doing machine learning on browser history on their phone devices. In addition, Google Chrome, Mozilla Firefox, Safari, and other browsers are major competitors who could implement this more efficiently by modifying their source.
+
+14. Why Apply
+We want to explore whether analyzing browser history can solve a deeper problem. We are looking for mentorship resources for optimizing the machine learning methods for Secure Browsing, Amazon Web Services for testing and processing, and a space to work on the application, like WeWork.
+
+15. Something Interesting
+For my CS170 final project, the objective was to approximate a traveling salesman problem (with three alternating colors). In order to do so, I created my own algorithm, called k-x-layer search, which does a k depth search with x count min re-expansion (depth first search would simply be where k = 1 and x = 1). This algorithm is essentially an abstracted form of generalized depth first search. It performed quite well, and matched even the k-opt algorithm, which was referenced online. One major drawback was the amount of time it took to run, but it was really cool trying to approximate a NP complete problem in efficient time.
