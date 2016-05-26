@@ -1,3 +1,9 @@
+/* **************************************************
+   indexedDB wrapper class Datastore manages any
+   requests to the key-value database; each datastore
+   represents a table
+   ************************************************** */
+
 define([],
 
 function() {

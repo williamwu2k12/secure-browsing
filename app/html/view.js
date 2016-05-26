@@ -98,6 +98,14 @@ document.onreadystatechange = function() {
                 append_rows(table);
             } else {
                 deauth_form.style.display = "none";
+                var fields = [username, password];
+                for (var i = 0; i < fields.length; i++) {
+                    fields[i].addEventListener("keyup", function(event) {
+                        if (event.keyCode == 13) {
+                            signin_button.click();
+                        }
+                    });
+                }
             }
 
             
