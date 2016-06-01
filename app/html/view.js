@@ -2,39 +2,49 @@ document.onreadystatechange = function() {
 
     if (document.readyState == "complete") {
 
+        var AUTH = "auth";
+        var DEAUTH = "deauth";
+        var TABLE = "link_table";
+        var TABLE_SIZE = 5;
+
+        function retrieve_elems() {
+
+            var doc = {};
+            doc.auth_form       = document.getElementById(AUTH);
+            doc.signin_button   = doc.auth_form.signin;
+            doc.signup_button   = doc.auth_form.signup;
+
+            doc.deauth_form     = document.getElementById(DEAUTH);
+            doc.signout_button  = doc.deauth_form.signout;
+
+            doc.username_field  = doc.auth_form.username;
+            doc.password_field  = doc.auth_form.password;
+
+            return doc;
+        }
+
         chrome.runtime.getBackgroundPage(function(background) {
+            window.SB = background.SB;
             var SB = background.SB;
-            var DB = SB.Database;
+            var doc = retrieve_elems();
 
-            var AUTH = "auth";
-            var DEAUTH = "deauth";
-            var TABLE = "link_table";
-            var TABLE_SIZE = 5;
+            if (SB.view == undefined) {
+                SB.view = {
+                    auth_display: doc.auth_form.style.display,
+                    deauth_display: doc.auth_form.style.display
+                }
+            }
 
-            auth_form = document.getElementById(AUTH);
-            signin_button = auth_form.signin;
-            signup_button = auth_form.signup;
-
-            deauth_form = document.getElementById(DEAUTH);
-            signout_button = deauth_form.signout;
-
-            username = auth_form.username;
-            password = auth_form.password;
-
-            var auth_display = auth_form.style.display;
-            var deauth_display = deauth_form.style.display;
-
-
-            function clear_table(table) {
+            function table_clear(table) {
                 while (table.firstChild) {
                     table.removeChild(table.firstChild);
                 }
             }
 
-            function append_rows(table) {
+            function table_populate(table) {
                 var value;
-                DB.count(function(num) {
-                    DB.get([num + 1 - TABLE_SIZE, num + 1], null, function(values) {
+                SB.Account.user.history.count(function(num) {
+                    SB.Account.user.history.get([num + 1 - TABLE_SIZE, num + 1], null, function(values) {
                         for (var i in values) {
                             value = values[i];
                             var tr = document.createElement("tr");
@@ -45,34 +55,38 @@ document.onreadystatechange = function() {
                             tr.appendChild(a);
                             table.appendChild(tr);
                         }
-                        auth_form.style.display = "none";
-                        deauth_form.style.display = deauth_display;
                     });
                 });
             }
 
-            signin_button.onclick = function() {
-                DB.signin(username.value, password.value, function(success) {
+            doc.signin_button.onclick = function() {
+                var doc = retrieve_elems();
+                SB.Account.signin(doc.username_field.value, doc.password_field.value, function(success) {
                     if (success == true) {
                         var table = document.getElementById(TABLE);
-                        clear_table(TABLE);
+                        table_clear(TABLE);
 
-                        append_rows(table);
+                        table_populate(table);
+                        doc.auth_form.style.display = "none";
+                        doc.deauth_form.style.display = SB.view.deauth_display;
                     }
                 });
             };
-            signout_button.onclick = function() {
-                DB.signout(function(success) {
+            doc.signout_button.onclick = function() {
+                var doc = retrieve_elems();
+                SB.Account.signout(function(success) {
                     if (success == true) {
                         var table = document.getElementById(TABLE);
-                        clear_table(table);
-                        auth_form.style.display = auth_display;
-                        deauth_form.style.display = "none";
+                        table_clear(table);
+                        
+                        doc.auth_form.style.display = SB.view.auth_display;
+                        doc.deauth_form.style.display = "none";
                     }
                 });
             };
-            signup_button.onclick = function() {
-                DB.signup(username.value, password.value, function(success) {
+            doc.signup_button.onclick = function() {
+                var doc = retrieve_elems();
+                SB.Account.signup(doc.username_field.value, doc.password_field.value, function(success) {
                     if (success == true) {
                         // alert or flash on success
                     }
@@ -81,28 +95,29 @@ document.onreadystatechange = function() {
 
             function wrap_reset(fn) {
                 return function() {
+                    var doc = retrieve_elems();
                     fn();
-                    auth_form.reset();
-                    deauth_form.reset();
+                    doc.auth_form.reset();
+                    doc.deauth_form.reset();
                 }
             }
-            signin_button.onclick = wrap_reset(signin_button.onclick);
-            signout_button.onclick = wrap_reset(signout_button.onclick);
-            signup_button.onclick = wrap_reset(signup_button.onclick);
+            doc.signin_button.onclick = wrap_reset(doc.signin_button.onclick);
+            doc.signout_button.onclick = wrap_reset(doc.signout_button.onclick);
+            doc.signup_button.onclick = wrap_reset(doc.signup_button.onclick);
 
 
-            if (DB.auth == true) {
-                auth_form.style.display = "none";
+            if (SB.Account.auth == true) {
+                doc.auth_form.style.display = "none";
                 var table = document.getElementById(TABLE);
-                clear_table(table);
-                append_rows(table);
+                table_clear(table);
+                table_populate(table);
             } else {
-                deauth_form.style.display = "none";
-                var fields = [username, password];
+                doc.deauth_form.style.display = "none";
+                var fields = [doc.username_field, doc.password_field];
                 for (var i = 0; i < fields.length; i++) {
                     fields[i].addEventListener("keyup", function(event) {
                         if (event.keyCode == 13) {
-                            signin_button.click();
+                            doc.signin_button.click();
                         }
                     });
                 }

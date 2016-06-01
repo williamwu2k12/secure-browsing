@@ -12,12 +12,22 @@ require.config({
     }
 });
 
-define(["/app/script/database.js"], function(Database) {
+define(["/app/script/datastore.js",
+        "/app/script/account.js",
+        "/app/script/history.js",
+        "/app/script/interest.js",
+        "/app/script/helper.js"],
+
+function(Datastore, Account, History, Interest, Helper) {
 
     /* do any initial database setup */
 
     var SB = {};
-    SB.Database = Database;
+    SB.Datastore    = Datastore;
+    SB.Account      = Account;
+    SB.History      = History;
+    SB.Interest     = Interest;
+    SB.Helper       = Helper;
 
     return SB;
 

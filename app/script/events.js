@@ -11,7 +11,6 @@ function(SB) {
     if (window.SB == undefined) {
         window.SB = SB; // for sharing between background and popup
     }
-    var DB = SB.Database;
 
     /* processes tabs that have been updated, immediately
        adding the new url to encrypted history store */
@@ -26,7 +25,9 @@ function(SB) {
                 url: tab.url,
                 time: new Date().getTime()
             };
-            DB.push(link);
+            if (SB.Account.auth) {
+                SB.Account.user.history.push(link);
+            }
         }
     });
 
@@ -39,7 +40,9 @@ function(SB) {
         var elem_href = request.elem_href;
         var elem_tag = request.elem_tag;
         var elem_html = request.elem_html;
-        DB.train(src_protocol, src_html, elem_href, function() {});
+        if (SB.Account.auth) {
+            SB.Account.user.interest.train(src_protocol, src_html, elem_href, function() {});
+        }
     });
 
 });
