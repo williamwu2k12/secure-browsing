@@ -77,6 +77,7 @@ function(Datastore, Interest, Network, History, Helper) {
             if (success) {
                 Account.signout();
                 Account.user = new Account(username, password);
+                console.log("Success: signed into account '" + username + "'");
                 Account.auth = true;
             }
             callback(success);
@@ -105,6 +106,7 @@ function(Datastore, Interest, Network, History, Helper) {
             user.history.password = undefined;
         }
         Account.user = undefined;
+        console.log("Success: signed out of accont");
         Account.auth = false;
         callback(true);
     };
@@ -138,8 +140,10 @@ function(Datastore, Interest, Network, History, Helper) {
                 var hash_text = Helper.hash(password);
                 Account.ds.set(username, hash_text, function(evt) {
                     if (evt.returnValue == true) {
+                        console.log("Success: signed up for account '" + username + "'");
                         callback(true);
                     } else {
+                        console.log("Error: failed to set account datastore");
                         callback(false);
                     }
                 });

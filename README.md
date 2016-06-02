@@ -4,57 +4,39 @@ William Wu
 Luis Vasquez  
 Kevin Huynh
 
+This repository contains the source files of Secure Browsing, a Google Chrome extension.
 
-## Planned Features
+Secure Browsing analyzes and securely saves browsing patterns to estimate user interest in links on a page.
 
+#### Motivation:
 
-### Problem and Solution
+Existing websites and services have separate machine learning implementations to best serve the right content to the customer. A browser level model personalizes the browsing experience by training on only one user's entire dataset. A normal service trains only on requests sent to their servers, usually targets the average case, may have a suboptimal recommendation system, and requires registration.
 
-Many existing websites/services have great implementations of machine learning techniques that attempt to solve the search problem of returning the right results for a query, or for any user based on their past search history on that website. For example, Google has Page Rank, and Facebook has the News Feed. Other sites, such as Stack Overflow and Amazon, also have their own algorithms. There are also a lot of sites that don't implement any machine learning techniques. In general, however, the search solution is targeted in solving the average case, and limited in their data, which are only the server requests to their specific site. With these limitations, the websites can infer what is generally useful and what is not. They can also infer what is generally useful to each specific registered user.
+#### Interface
 
-There is a solution that augments the existing solution. Individual browsing history is a super valuable resource that contains a huge amount of data; every day, a user can browse approximately 1000 links. Individual browsing history is a much better indicator of a user's preferences, and is a resource that every company does not have access to (each website only has access to requests to their own servers). In addition, this data's sequence is also super important; to solve a problem, the user makes many choices of which links to click on and which ones to ignore.
+The popup menu is the gateway for authentication, providing signin, signout, and signup forms. When authenticated, the popup transitions into displaying a list of the decrypted most recently viewed links stored in history. The extension page gives more detailed information. Interest scores are annotated above each detectable hard link on page (dynamic links are generated through javascript), and only display on mouse hover.
 
-The solution, therefore, is to run a neural network locally on the browsing history. Because neural networks generally take a long time to train, the browser can iterate on each new link browsed, and each link not browsed. This will minimize the amount of computation spikes, and make machine learning actually feasible on every device, especially computers. Neural network quality is highly dependent on featurization and filtration decisions. A bag of words model of the most frequent words, removing HTML tags and ignoring image and videos, might be an interesting idea.
+#### Interest
 
-On the user side, the augmentation follows the Avast Antivirus model. Avast labels each link on a page with a security rating (colored red for dangerous, green for safe). For this Chrome extension solution, each link on a page can be labeled with the neural network's prediction on its usefulness (colors or numbers).
+Suppose that a user is currently viewing page X, and the user navigates to page Y using link A from the set of all links L on X. The user's decision to navigate away using A implies that A is the most interesting/desired url, and that conversely L - {A}, the set of all links except A, are less interesting.
 
-With such sensitive data, security is an extremely relevant concern. Neural network weights and browsing history should be encrypted, since this is personal user data. Because of this, database design should account for encryption, as well as indexing.
+To translate this to a machine learning classification model, the links can be classified: {A: 1.0, L - {A}: 0.0}; "not spam" for the clicked links, and "spam" for the ignored ones. This implies, very loosely, that the content on each of the corresponding pages of the links also shares the same classification (note: a link is also commonly judged by the advertisement around it rather than by its content). Thus, many dimensions of the feature set come from analyzing the html string of each of the pages pointed to by the links.
 
+#### Security
 
-### Security
-- multiple layers of security and different encryptions for databases
-- password protection with different commands for each key
-    - delete all caches, browsing history, bookmarks, favorites
-    - open a fake database, pregenerated based on public browsing history
-    - open the actual database
-- pregenerated key file required with the actual password
+Password SHA256 hashes are stored on disk (indexedDB), along with other account details. The raw password is temporarily stored in browser memory while the user is logged in, and erased at logout. Browser history, from either normal or incognito mode, is encrypted using AES with the raw password and a salt. Though login is purely aesthetic, any unauthorized decryption with an incorrect password still yields unusable data for a malicious user.
 
+Neural network weights are also encrypted. For performance reasons (since the 2d arrays are quite large), the weights are flushed to indexedDB infrequently. References to the weights are removed after logout.
 
-### Browsing
-- general browsing
-    - saved tabsets as major points on a timeline, since most successful searches end with a close
-    - link filters, blacklists and whitelists, to avoid seeing previously viewed links
-- favoriting, rating, bookmarking, with sourcing and external links or mirrors for the same content
-    - link downloading, using curl
-    - link preloading to avoid waiting on large videos
-- recommendations
-    - linklist public sharing
-    - search term analysis with recommendations using google api
-    - link analysis with graphs on frequency of viewing
-    - recommendations for search engines
-- bookmark vids to favorite moments
-    - instant replay, fast forward, slow down
-    - looping (going forward, then going backward), gif creation
-    - facial recognition and comparison with imdb
+### Libraries:
 
+brain (https://github.com/harthur/brain)
+crypto-js (https://code.google.com/archive/p/crypto-js)
 
-### Analysis
-- parent/child tree, displayed as an actual tree
-    - show animation of depth-first search, breadth-first search, user-defined search
-    - each node has a parent reference and a child reference
-- graphs of frequency of site visits
-    - filter by domain, search term, time of access
+### Installation:
 
+1. Navigate to "chrome://extensions"
+2. Check "Developer mode"
+3. Click "Load unpacked extension..." and choose the folder Secure Browsing
 
-Cited Resources
-- https://www.iconfinder.com/search/?q=iconset:flat-ui-free-2 or http://iconfindr.com/1sONVsY
+https://developer.chrome.com/extensions/getstarted

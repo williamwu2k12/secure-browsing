@@ -42,6 +42,21 @@ function(Datastore) {
 
     }
 
+    /*
+      @purpose: combine the results of different feature functions on given data
+      @param: <Object> data: the data to featurize
+      @param: <Array> feature_funcs: a list of function pointers that each returns an array of floats
+      @return: an array of floats
+      @examples:
+        var str_length = function(str) {return str.length;};
+        var str_sum = function(str) {
+            var sum = 0
+            return str.split("").forEach(function(letter) {
+                sum += letter.charCodeAt(0) - 64;
+            });
+        };
+        var features = net.featurize(html, [str_length, str_sum]);
+    */
     Network.prototype.featurize = function(data, feature_funcs) {
         var features = [];
         var func = undefined;
@@ -52,6 +67,15 @@ function(Datastore) {
         return features;
     }
 
+    /*
+      @purpose: train on neural net given features and save to disk if necessary
+      @param: <Array> features: a data point represented as an array of floats
+      @param: <Float> label: the classification for the feature set
+      @examples:
+        var features = net.featurize(html, [str_length, str_sum]);
+        var classification = 1.0;
+        net.train(features, classification);
+    */
     Network.prototype.train = function(features, label) {
         this.net.train([{input: features, output: label}],
                        {iterations: this.iterations});
@@ -65,14 +89,35 @@ function(Datastore) {
         this.save_count += 1;
     }
 
+    /*
+      @purpose: estimate the label given the features
+      @param: <Array> features: a data point represented as an array of floats
+      @return: an array of floats representing the result prediction
+      @examples:
+        var label = net.predict([0.0, 1.0, 2.0, 3.0, 4.0])[0];
+    */
     Network.prototype.predict = function(features) {
         return this.net.run(features);
     }
 
+    /*
+      @purpose: import json data into the internal neural network
+      @param: <Object> json: an object of the same format as that returned from this.export()
+      @examples:
+        var json = net.export();
+        // ... some code later ...
+        net.import(json);
+    */
     Network.prototype.import = function(json) {
         this.net.fromJSON(json);
     }
 
+    /*
+      @purpose: export the neural net to a saveable format
+      @return: a json object
+      @examples:
+        var json = net.export();
+    */
     Network.prototype.export = function() {
         return this.net.toJSON();
     }

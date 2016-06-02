@@ -29,7 +29,6 @@ function(Datastore, Interest, History, Account) {
     */
 
 
-
     var encrypt = function(plain_text, password) {
         return CryptoJS.AES.encrypt(plain_text, password).toString();
     }

@@ -28,7 +28,6 @@ function(Datastore, Network) {
         init(this);
     }
 
-
     Interest.feature_word_count = function(string) {
         var words = string.split(/[\s\n\r\t]+/);
         words = words.filter(function(word) {return word != ""});

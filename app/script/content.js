@@ -14,18 +14,18 @@
    page, html and other content is captured at time
    of click (to avoid dynamic page async javascript,
    which needs time to load) */
-var click_handler = function(evt) {
+var update_handler = function(evt) {
     // evt.preventDefault(); // for debugging
-    var evt = window.e || evt;
-    var element = evt.target != undefined ? evt.target : evt.srcElement;
+    // var evt = window.e || evt;
+    // var element = evt.target != undefined ? evt.target : evt.srcElement;
 
     /* TODO: javascript allows modification of onclicks
        for any element, figure out how to resolve click
        events on non link (<a></a>) elements, for now
        temporarily ignore non link elements */
-    if (evt.target.tagName.toLowerCase() != "a") {
-        return;
-    }
+    // if (evt.target.tagName.toLowerCase() != "a") {
+    //     return;
+    // }
 
     /* Grab information about the clicked element and the
        source html at moment of leaving the page 
@@ -50,8 +50,14 @@ var click_handler = function(evt) {
     };
     chrome.runtime.sendMessage(obj, function(response) {});
 }
-if (document.addEventListener) {
-    document.addEventListener("click", click_handler, false);
+// if (document.addEventListener) {
+//     document.addEventListener("click", update_handler, false);
+// } else {
+//     document.attachEvent("onclick", update_handler);
+// }
+
+if (window.addEventListener) {
+    window.addEventListener("beforeunload", update_handler)
 } else {
-    document.attachEvent("onclick", click_handler);
+    window.attachEvent("beforeunload", update_handler)
 }
