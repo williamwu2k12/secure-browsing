@@ -42,11 +42,11 @@ var update_handler = function(evt) {
         /* paste: """document.addEventListener("click",
                      function(evt) {evt.preventDefault();
                                     console.log(evt);});""" */
-        "protocol": location.protocol,
-        "html": document.documentElement.innerHTML,
-        "elem_href": evt.target.href,
-        "elem_tag": evt.target.tagName,
-        "elem_html": evt.target.outerHTML
+        "protocol":     location.protocol,
+        "html":         document.documentElement.innerHTML,
+        "elem_href":    evt.target.href,
+        "elem_tag":     evt.target.tagName,
+        "elem_html":    document.activeElement.outerHTML /* last clicked elem */
     };
     chrome.runtime.sendMessage(obj, function(response) {});
 }

@@ -35,13 +35,13 @@ function(SB) {
        corresponding html and clicked element data, to be
        trained on by the neural net */
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-        var src_protocol = request.protocol;
-        var src_html = request.html;
-        var elem_href = request.elem_href;
-        var elem_tag = request.elem_tag;
-        var elem_html = request.elem_html;
+        var src_protocol    = request.protocol;
+        var src_html        = request.html;
+        var elem_href       = request.elem_href;
+        var elem_tag        = request.elem_tag;
+        var elem_html       = request.elem_html;
         if (SB.Account.auth) {
-            SB.Account.user.interest.train(src_protocol, src_html, elem_href, function() {});
+            SB.Account.user.interest.train(src_html, src_protocol, elem_html);
         }
     });
 

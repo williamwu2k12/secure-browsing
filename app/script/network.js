@@ -39,7 +39,6 @@ function(Datastore) {
 
         init_class();
         init(this);
-
     }
 
     /*
@@ -70,7 +69,7 @@ function(Datastore) {
     /*
       @purpose: train on neural net given features and save to disk if necessary
       @param: <Array> features: a data point represented as an array of floats
-      @param: <Float> label: the classification for the feature set
+      @param: <Array> label: the classification for the feature set, an array of floats
       @examples:
         var features = net.featurize(html, [str_length, str_sum]);
         var classification = 1.0;
@@ -86,7 +85,7 @@ function(Datastore) {
             console.log("Success: saved network weights to disk.");
             this.save_count = 0.0;
         }
-        this.save_count += 1;
+        this.save_count += 1.0;
     }
 
     /*

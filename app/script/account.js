@@ -106,7 +106,7 @@ function(Datastore, Interest, Network, History, Helper) {
             user.history.password = undefined;
         }
         Account.user = undefined;
-        console.log("Success: signed out of accont");
+        console.log("Success: signed out of account");
         Account.auth = false;
         callback(true);
     };

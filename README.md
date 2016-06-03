@@ -28,12 +28,13 @@ Password SHA256 hashes are stored on disk (indexedDB), along with other account 
 
 Neural network weights are also encrypted. For performance reasons (since the 2d arrays are quite large), the weights are flushed to indexedDB infrequently. References to the weights are removed after logout.
 
-### Libraries:
+#### Libraries
 
 brain (https://github.com/harthur/brain)
+
 crypto-js (https://code.google.com/archive/p/crypto-js)
 
-### Installation:
+#### Installation
 
 1. Navigate to "chrome://extensions"
 2. Check "Developer mode"

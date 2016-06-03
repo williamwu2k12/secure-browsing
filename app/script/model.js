@@ -1,4 +1,9 @@
 /* the model file handles object storage */
+/* **************************************************
+   main Secure Browsing module meant to handle
+   storage, algorithms, and misc. (needs to be
+   remodularized, renamed, and soemwhat rewritten)
+   ************************************************** */
 
 p = function(string){console.log(string);};
 require.config({

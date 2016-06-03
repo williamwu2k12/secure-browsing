@@ -9,8 +9,8 @@ function(Datastore, Network) {
             if (Interest.setup) {
                 return;
             }
-            Interest.yes        = 1;
-            Interest.no         = 0;
+            Interest.yes        = [1.0];
+            Interest.no         = [0.0];
             Interest.setup      = true;
         }
 
@@ -21,7 +21,9 @@ function(Datastore, Network) {
             self.net = new Network(name);
             self.feature_funcs = [Interest.feature_char_counts,
                                   Interest.feature_html_length,
+                                  Interest.feature_char_sum,
                                   function() {return 1.0}]; /* ones-column acts as a normalizing feature */
+            self.feature_count = self.net.featurize("", self.feature_funcs).length;
         }
 
         init_class();
@@ -59,6 +61,22 @@ function(Datastore, Network) {
         return [string.length];
     }
 
+    Interest.feature_char_sum = function(string) {
+        var sum = 0.0;
+        for (var i = 0; i < string.length; i++) {
+            sum += string[i].charCodeAt(0);
+        }
+        return [sum];
+    }
+
+    Interest.feature_image_count = function(string) {
+        return [];
+    }
+
+    Interest.feature_video_count = function(string) {
+        return [];
+    }
+
     Interest.parse_links = function(html, protocol) {
         var doc = document.createElement("html");
         doc.innerHTML = html;
@@ -76,47 +94,47 @@ function(Datastore, Network) {
         xml_req.onreadystatechange = function() {
             if (xml_req.readyState == 4 && xml_req.status == 200) {
                 var response = xml_req.responseText;
-                var html = document.createElement("html");
-                html.innerHTML = response;
-                var i = 0;
-                while (i < html.children.length) {
-                    if (html.children[i].tagName.toLowerCase() == "head") {
-                        html.children[i].remove();
-                        continue;
-                    }
-                    i += 1;
-                }
-                var raw_text = html.textContent;
+                // var html = document.createElement("html");
+                // html.innerHTML = response;
+                // var i = 0;
+                // while (i < html.children.length) {
+                //     if (html.children[i].tagName.toLowerCase() == "head") { /* remove head objects because they have scripts */
+                //         html.children[i].remove();
+                //         continue;
+                //     }
+                //     i += 1;
+                // }
+                // var raw_text = html.textContent;
+                var raw_text = response;
                 callback(raw_text);
             }
         }
-        url = "https://www.example.com";
-        xml_req.open("GET", url, false);
-        xml_req.send();
+        try {
+            xml_req.open("GET", url, false);
+            xml_req.send();
+        } catch (error) {
+            // console.log("Error: failed to retrieve html at '" + url + "'");
+        }
     }
 
 
     Interest.prototype.train = function(html, protocol, elem) {
         var features = this.net.featurize(html, this.feature_funcs);
         this.net.train(features, Interest.yes);
-        return;
-        
+
+        html = html.replace(elem, ""); /* remove clicked elem */
         var links = Interest.parse_links(html, protocol);
+        var self = this;
         for (var k = 0; k < links.length; k++) {
             var url = links[k].href;
-            var e = document.createElement("div");
-            e.outerHTML = elem;
-            if (url != e.href) { /* check if not the clicked element */
-                Interest.retrieve_html(url, function(elem_html) {
-                    var features = this.net.featurize(elem_html);
-                    this.net.train(features, Interest.no);
-                });
-            }
+            Interest.retrieve_html(url, function(elem_html) {
+                var features = self.net.featurize(elem_html, self.feature_funcs);
+                self.net.train(features, Interest.no);
+            });
         }
 
     }
 
-    /* TO BE EVENTUALLY DONE */
     Interest.prototype.predict = function(data) {
         var features = this.net.featurize(data, this.feature_funcs);
         return this.net.predict(features);
