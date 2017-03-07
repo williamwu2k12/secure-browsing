@@ -40,8 +40,11 @@ function(SB) {
         var elem_href       = request.elem_href;
         var elem_tag        = request.elem_tag;
         var elem_html       = request.elem_html;
+
+        var location        = request.location;
+
         if (SB.Account.auth) {
-            SB.Account.user.interest.train(src_html, src_protocol, elem_html);
+            SB.Account.user.interest.train(src_html, src_protocol, elem_html, location);
         }
     });
 

@@ -35,7 +35,7 @@ function(Datastore, Helper) {
       @examples:
         History.count(function(num) {
             if (num > 100000) {
-                console.log("too many links in history!");
+                p("too many links in history!");
             }
         });
     */
@@ -52,7 +52,7 @@ function(Datastore, Helper) {
         @param: <Array> objects: an array of objects to be processed
       @examples:
         History.get(1, null, function(objects) {
-            console.log(objects[0]);
+            p(objects[0]);
         });
         History.get([1, 3], null, function(objects) {
             for (var i in objects) {

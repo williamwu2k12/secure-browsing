@@ -41,22 +41,19 @@ var update_handler = function(evt) {
     var obj = {
         /* paste: """document.addEventListener("click",
                      function(evt) {evt.preventDefault();
-                                    console.log(evt);});""" */
+                                    p(evt);});""" */
         "protocol":     location.protocol,
         "html":         document.documentElement.innerHTML,
+        "location":     location.href /* https://developer.mozilla.org/en-US/docs/Web/API/Window/location */
+
         "elem_href":    evt.target.href,
         "elem_tag":     evt.target.tagName,
-        "elem_html":    document.activeElement.outerHTML /* last clicked elem */
+        "elem_html":    document.activeElement.outerHTML, /* last clicked elem */
     };
     chrome.runtime.sendMessage(obj, function(response) {});
 }
-// if (document.addEventListener) {
-//     document.addEventListener("click", update_handler, false);
-// } else {
-//     document.attachEvent("onclick", update_handler);
-// }
 
-if (window.addEventListener) {
+if (window.addEventListener) { /* document vs window, beforeunload vs click */
     window.addEventListener("beforeunload", update_handler)
 } else {
     window.attachEvent("beforeunload", update_handler)

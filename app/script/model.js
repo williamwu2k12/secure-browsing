@@ -5,7 +5,12 @@
    remodularized, renamed, and soemwhat rewritten)
    ************************************************** */
 
-p = function(string){console.log(string);};
+var CLOG = true;
+p = function(string) {
+    if (CLOG) {
+        console.log(string);
+    }
+};
 require.config({
     "paths": {
         "CryptoJS.AES": "/app/script/lib/cryptojs/rollups/aes",
@@ -21,9 +26,10 @@ define(["/app/script/datastore.js",
         "/app/script/account.js",
         "/app/script/history.js",
         "/app/script/interest.js",
-        "/app/script/helper.js"],
+        "/app/script/helper.js",
+        "/app/test/test.js"],
 
-function(Datastore, Account, History, Interest, Helper) {
+function(Datastore, Account, History, Interest, Helper, Test) {
 
     /* do any initial database setup */
 
@@ -33,6 +39,7 @@ function(Datastore, Account, History, Interest, Helper) {
     SB.History      = History;
     SB.Interest     = Interest;
     SB.Helper       = Helper;
+    SB.Test         = {};
 
     return SB;
 

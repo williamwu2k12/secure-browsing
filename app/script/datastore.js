@@ -79,11 +79,11 @@ function() {
                 };
 
                 open_req.onerror = function(evt) {
-                    console.log(evt);
+                    p(evt);
                 };
 
                 open_req.onblocked = function(evt) {
-                    console.log(evt);
+                    p(evt);
                 };
             }
 
@@ -161,7 +161,7 @@ function() {
               @param: <Function> callback(<Integer> num): a function that takes in the resultant count integer
               @examples:
                 db.count(function(num) {
-                    console.log(num);
+                    p(num);
                 });
             */
             this.count  = function(callback) {
@@ -179,10 +179,10 @@ function() {
               @param: <String> index_name [null]: the name of the index, use value null to use the default store keys
               @param: <Function> callback(<Object> obj): a function that takes in the resultant object, or an array of resultant objects, dependant on whether the key is an integer or an array
               @examples:
-                db.get(1, null, function(value) {console.log(value);});
+                db.get(1, null, function(value) {p(value);});
                 db.get([1, 3], "time_index", function(values) {
                     for (var i in values) {
-                        console.log(values[i]);
+                        p(values[i]);
                     } 
                 });
             */
@@ -281,12 +281,12 @@ function() {
                 var store = access_store();
                 var req = store.clear();
                 req.onsuccess = function(evt) {
-                    console.log("success: cleared the store for user");
+                    p("success: cleared the store for user");
                     callback(evt);
                 }
                 req.onerror = function(evt) {
-                    console.log("failure: could not clear user store");
-                    console.log(evt);
+                    p("failure: could not clear user store");
+                    p(evt);
                 }
             }
 

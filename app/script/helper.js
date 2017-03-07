@@ -1,10 +1,8 @@
-define(["/app/script/datastore.js",
-        "/app/script/interest.js",
-        "/app/script/history.js",
-        "/app/script/account.js",
+define(["/app/script/account.js",
         "CryptoJS.AES",
         "CryptoJS.SHA256"],
-function(Datastore, Interest, History, Account) {
+
+function(Account) {
 
 
     /* // original
@@ -37,8 +35,24 @@ function(Datastore, Interest, History, Account) {
     }
 
     var hash = function(string) {
-        return CryptoJS.SHA256(string).toString()
+        return CryptoJS.SHA256(string).toString();
     }
+
+
+
+    /**
+     * Shuffles array in place.
+     * @param {Array} array items The array containing the items.
+     */
+    var shuffle = function(array) {
+        for (var i = array.length; i; i--) {
+            var j = Math.floor(Math.random() * i);
+            var x = array[i - 1];
+            array[i - 1] = array[j];
+            array[j] = x;
+        }
+    }
+
 
 
 
@@ -82,6 +96,8 @@ function(Datastore, Interest, History, Account) {
     Helper.encrypt          = encrypt;
     Helper.decrypt          = decrypt;
     Helper.hash             = hash;
+
+    Helper.shuffle          = shuffle;
 
     return Helper;
 });

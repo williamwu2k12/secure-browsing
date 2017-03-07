@@ -1,7 +1,8 @@
 define(["/app/script/datastore.js",
-        "/app/script/network.js"],
+        "/app/script/network.js",
+        "/app/script/helper.js"],
 
-function(Datastore, Network) {
+function(Datastore, Network, Helper) {
 
     function Interest(name) {
 
@@ -11,6 +12,7 @@ function(Datastore, Network) {
             }
             Interest.yes        = [1.0];
             Interest.no         = [0.0];
+            Interest.negatives  = 20;
             Interest.setup      = true;
         }
 
@@ -18,7 +20,11 @@ function(Datastore, Network) {
             if (name == undefined) {
                 return;
             }
-            self.net = new Network(name);
+            self.net = new Network(name, {
+                "layers": [100, 50, 10],
+                "yes_iters": Interest.negatives,
+                "no_iters": 1
+            });
             self.feature_funcs = [Interest.feature_char_counts,
                                   Interest.feature_html_length,
                                   Interest.feature_char_sum,
@@ -38,7 +44,7 @@ function(Datastore, Network) {
     }
 
     Interest.feature_char_counts = function(string) {
-        var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ".split("");
+        var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 `~!@#$%^&*()-_=+[{]}\|;:'\",<.>/?\s\n\r\t".split("");
 
         var char_counts = {};
         for (var i = 0; i < chars.length; i++) {
@@ -52,7 +58,7 @@ function(Datastore, Network) {
 
         var features = [];
         for (var i = 0; i < chars.length; i++) {
-            features.push(char_counts[chars[i]]);
+            features.push(char_counts[chars[i]] / string.length);
         }
         return features;
     }
@@ -77,13 +83,21 @@ function(Datastore, Network) {
         return [];
     }
 
-    Interest.parse_links = function(html, protocol) {
+    Interest.parse_links = function(html, protocol, location) {
         var doc = document.createElement("html");
         doc.innerHTML = html;
         var links = doc.getElementsByTagName("a");
+        var ext_id = chrome.runtime.id;
+
+        var ext_pfix = "chrome-extension://";
+        var ext_href = ext_pfix + ext_id + "/", /* replace extension relative link with real link */
+            real_href = null;
         for (var k = 0; k < links.length; k++) {
-            if (links[k].href.substring(0, 17) == "chrome-extension:") {
-                links[k].href = protocol + links[k].href.substring(17)
+            real_href = links[k].href.substring(0, ext_href.length);
+            if (real_href == ext_href) {
+                links[k].href = location + links[k].href.substring(ext_href.length);
+            } else if (links[k].href.substring(0, ext_pfix.length) == ext_pfix) {
+                links[k].href = links[k].href.substring(ext_pfix.length);
             }
         }
         return links;
@@ -94,45 +108,42 @@ function(Datastore, Network) {
         xml_req.onreadystatechange = function() {
             if (xml_req.readyState == 4 && xml_req.status == 200) {
                 var response = xml_req.responseText;
-                // var html = document.createElement("html");
-                // html.innerHTML = response;
-                // var i = 0;
-                // while (i < html.children.length) {
-                //     if (html.children[i].tagName.toLowerCase() == "head") { /* remove head objects because they have scripts */
-                //         html.children[i].remove();
-                //         continue;
-                //     }
-                //     i += 1;
-                // }
-                // var raw_text = html.textContent;
-                var raw_text = response;
-                callback(raw_text);
+                callback(response);
             }
-        }
-        try {
-            xml_req.open("GET", url, false);
-            xml_req.send();
-        } catch (error) {
-            // console.log("Error: failed to retrieve html at '" + url + "'");
-        }
+        };
+        xml_req.onerror = function() {};
+        xml_req.open("GET", url, false);
+        xml_req.send();
     }
 
+    Interest.train_links = function(self, array, indices, i) {
+        if (i >= indices.length) {
+            return;
+        }
+        var url = array[indices[i]].href;
+        p(url);
+        Interest.retrieve_html(url, function(elem_html) {
+            var features = self.net.featurize(elem_html, self.feature_funcs);
+            self.net.train(features, Interest.no);
+            Interest.train_links(self, array, indices, i + 1);
+        });
+    }
 
-    Interest.prototype.train = function(html, protocol, elem) {
+    Interest.prototype.train = function(html, protocol, elem, location) {
         var features = this.net.featurize(html, this.feature_funcs);
         this.net.train(features, Interest.yes);
 
         html = html.replace(elem, ""); /* remove clicked elem */
-        var links = Interest.parse_links(html, protocol);
-        var self = this;
-        for (var k = 0; k < links.length; k++) {
-            var url = links[k].href;
-            Interest.retrieve_html(url, function(elem_html) {
-                var features = self.net.featurize(elem_html, self.feature_funcs);
-                self.net.train(features, Interest.no);
-            });
+        var links = Interest.parse_links(html, protocol, location);
+        var indices = [];
+        for (var i = 0; i < links.length; i++) {
+            indices.push(i);
         }
+        Helper.shuffle(indices); /* shuffling links doesn't work for some reason */
+        indices = indices.slice(0, Math.min(Interest.negatives, links.length));
 
+        var self = this;
+        Interest.train_links(self, links, indices, 0);
     }
 
     Interest.prototype.predict = function(data) {

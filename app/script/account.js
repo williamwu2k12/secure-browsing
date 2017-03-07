@@ -58,7 +58,7 @@ function(Datastore, Interest, Network, History, Helper) {
       @examples:
         Account.signin("user0", "pass_phrase", function(success) {
             if (success == true) {
-                console.log("user successfully signed in");
+                p("user successfully signed in");
             }
         });
     */
@@ -68,16 +68,16 @@ function(Datastore, Interest, Network, History, Helper) {
             var hash_text = Helper.hash(password);
             var success = true;
             if (value == undefined) {
-                console.log("Error: account does not exist");
+                p("Error: account does not exist");
                 success = false;
             } else if (value != hash_text) {
-                console.log("Error: password does not match");
+                p("Error: password does not match");
                 success = false;
             }
             if (success) {
                 Account.signout();
                 Account.user = new Account(username, password);
-                console.log("Success: signed into account '" + username + "'");
+                p("Success: signed into account '" + username + "'");
                 Account.auth = true;
             }
             callback(success);
@@ -92,7 +92,7 @@ function(Datastore, Interest, Network, History, Helper) {
       @examples:
         Account.signout(function(success) {
             if (success == true) {
-                console.log("user successfully signed out");
+                p("user successfully signed out");
             }
         });
     */
@@ -106,7 +106,7 @@ function(Datastore, Interest, Network, History, Helper) {
             user.history.password = undefined;
         }
         Account.user = undefined;
-        console.log("Success: signed out of account");
+        p("Success: signed out of account");
         Account.auth = false;
         callback(true);
     };
@@ -121,7 +121,7 @@ function(Datastore, Interest, Network, History, Helper) {
       @examples:
         Account.signup(function(success) {
             if (success == true) {
-                console.log("user successfully signed up");
+                p("user successfully signed up");
             }
         });
     */
@@ -140,15 +140,15 @@ function(Datastore, Interest, Network, History, Helper) {
                 var hash_text = Helper.hash(password);
                 Account.ds.set(username, hash_text, function(evt) {
                     if (evt.returnValue == true) {
-                        console.log("Success: signed up for account '" + username + "'");
+                        p("Success: signed up for account '" + username + "'");
                         callback(true);
                     } else {
-                        console.log("Error: failed to set account datastore");
+                        p("Error: failed to set account datastore");
                         callback(false);
                     }
                 });
             } else {
-                console.log("Error: account already exists");
+                p("Error: account already exists");
                 callback(false);
             }
         });

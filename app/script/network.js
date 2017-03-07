@@ -23,14 +23,17 @@ function(Datastore) {
             self.name        = name;
             self.save_freq   = options.save_freq    || 1.0 / 25.0;
             self.save_count  = options.save_count   || 0.0;
-            self.layers      = options.layers       || [10, 10]; /* [500, 100, 10] */
+            self.layers      = options.layers       || [10, 10];
             self.rate        = options.rate         || 0.2;
+
             self.iterations  = options.iterations   || 1;
+            self.yes_iters   = options.yes_iters    || 1;
+            self.no_iters    = options.no_iters     || 1;
 
             self.net = new brain.NeuralNetwork({hiddenLayers: self.layers,
                                                 learningRate: self.rate});
             self.ds = new Datastore(Network.ds_name + "." + self.name);
-            self.ds.get(Network.ds_key, null, function(string) {
+            self.ds.get(Network.ds_key, null, function(string) { /* possibly wrap in promise to ensure nn is useable */
                 if (string != undefined) {
                     self.import(JSON.parse(string));
                 }
@@ -76,14 +79,14 @@ function(Datastore) {
         net.train(features, classification);
     */
     Network.prototype.train = function(features, label) {
+        var x = label[0] == 1.0 ? this.yes_iters : this.no_iters;
         this.net.train([{input: features, output: label}],
-                       {iterations: this.iterations});
-        console.log("Success: trained on data.");
+                       {iterations: x});
 
-        if (this.save_count > 1.0 / this.save_freq) {
+        var save_mod = 1.0 / this.save_freq;
+        if (this.save_count % save_mod == 0) {
             this.ds.set(Network.ds_key, JSON.stringify(this.export()));
-            console.log("Success: saved network weights to disk.");
-            this.save_count = 0.0;
+            p("Success: saved network weights to disk.");
         }
         this.save_count += 1.0;
     }
