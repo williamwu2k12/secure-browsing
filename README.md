@@ -38,6 +38,6 @@ crypto-js (https://code.google.com/archive/p/crypto-js)
 
 1. Navigate to "chrome://extensions"
 2. Check "Developer mode"
-3. Click "Load unpacked extension..." and choose the folder Secure Browsing
+3. Click "Load unpacked extension..." and choose the folder 'secure-browsing'
 
 https://developer.chrome.com/extensions/getstarted
